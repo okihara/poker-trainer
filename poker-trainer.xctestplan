@@ -1,0 +1,38 @@
+{
+  "configurations" : [
+    {
+      "id" : "9FA25E94-35DE-47C8-9CC3-FF2A8FB57DB5",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:poker-trainer.xcodeproj",
+      "identifier" : "44EC93D62D40914B0025E01B",
+      "name" : "poker-trainer"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:poker-trainer.xcodeproj",
+        "identifier" : "44EC93E62D40914C0025E01B",
+        "name" : "poker-trainerTests"
+      }
+    },
+    {
+      "enabled" : false,
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:poker-trainer.xcodeproj",
+        "identifier" : "44EC93F02D40914C0025E01B",
+        "name" : "poker-trainerUITests"
+      }
+    }
+  ],
+  "version" : 1
+}
