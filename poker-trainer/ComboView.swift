@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+
 // ハンドのデータモデル
 struct Hand: Identifiable {
     let id = UUID()
@@ -43,11 +44,30 @@ struct ComboView: View {
     @State private var selectedHands: [Hand] = [] // 選択済みのハンドを保持
     private let handGrid = generateHandGrid() // ハンドのグリッドデータ
 
+    @StateObject private var game = PokerGame()
+
     var body: some View {
         VStack {
-            Text("ハンドレンジを選択")
-                .font(.title)
-                .padding()
+            HStack {
+                ForEach(game.board, id: \.self) { card in
+                    Image(card.imageName)
+                        .resizable()
+                        .frame(width: 40, height: 60)
+                        .shadow(radius: 4)
+                }
+            }.padding(.top, 20)
+            
+            Text("手札")
+                .font(.headline)
+                .padding(.top, 5)
+            HStack {
+                ForEach(game.hand, id: \.self) { card in
+                    Image(card.imageName)
+                        .resizable()
+                        .frame(width: 40, height: 60)
+                        .shadow(radius: 4)
+                }
+            }
 
             // グリッド表示
             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 4), count: 13), spacing: 4) {
@@ -76,6 +96,9 @@ struct ComboView: View {
                 }
             }
             .padding()
+        }
+        .onAppear {
+            game.startGame()
         }
     }
 
