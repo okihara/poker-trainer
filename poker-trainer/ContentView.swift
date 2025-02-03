@@ -7,7 +7,8 @@ class PokerGame: ObservableObject {
     @Published var feedback: String = ""
     @Published var isLoading: Bool = false // ローディング状態を管理
     @Published var options: [Int] = []
-
+    @Published var evaluator: PokerHandEvaluator = PokerHandEvaluator()
+    
     let suits: [Suit] = [.hearts, .spades, .diamonds, .clubs]
     let ranks: [Rank] = [.two, .three, .four, .five, .six, .seven, .eight, .nine, .ten, .jack, .queen, .king, .ace]
     
@@ -15,7 +16,10 @@ class PokerGame: ObservableObject {
         var deck = createDeck()
         hand = Array(deck.prefix(2)) // 最初の2枚を手札
         deck.removeFirst(2)
+        
         board = Array(deck.prefix(3)) // 次の3枚をボード
+        deck.removeFirst(3)
+
         outs = calculateOuts()
         feedback = ""
 
@@ -33,6 +37,17 @@ class PokerGame: ObservableObject {
         }
     }
     
+    func startFromRiver() {
+        var deck = createDeck()
+        hand = Array(deck.prefix(2)) // 最初の2枚を手札
+        deck.removeFirst(2)
+        
+        board = Array(deck.prefix(5))
+        deck.removeFirst(5)
+
+        feedback = ""
+    }
+    
     private func createDeck() -> [Card] {
         var deck: [Card] = []
         for suit in suits {
@@ -44,7 +59,7 @@ class PokerGame: ObservableObject {
     }
     
     private func calculateOuts() -> Int {
-        let outs = PokerHandEvaluator().calculateOuts(hand: hand, board: board)
+        let outs = evaluator.calculateOuts(hand: hand, board: board)
         return outs.count
     }
     
@@ -67,14 +82,20 @@ class PokerGame: ObservableObject {
 struct ContentView: View {
     var body: some View {
         TabView {
-            GameView()
-                .tabItem {
-                    Label("アウツ", systemImage: "gamecontroller")
-                }
-            
             ComboView()
                 .tabItem {
-                    Label("コンボ", systemImage: "gearshape")
+                    Label("コンボ練習", systemImage: "gamecontroller")
+                }
+
+
+            GameView()
+                .tabItem {
+                    Label("アウツ練習", systemImage: "gamecontroller")
+                }
+            
+            ChatView()
+                .tabItem {
+                    Label("チャット風", systemImage: "gamecontroller")
                 }
         }
     }
@@ -154,13 +175,5 @@ struct GameView: View {
             game.startGame()
         }
         .padding()
-    }
-}
-
-struct SettingsView: View {
-    var body: some View {
-        Text("設定画面")
-            .font(.title)
-            .padding()
     }
 }
