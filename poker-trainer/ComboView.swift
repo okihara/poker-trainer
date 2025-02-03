@@ -41,13 +41,14 @@ func generateHandGrid() -> [[Hand]] {
 }
 
 struct ComboView: View {
-    @State private var selectedHands: [Hand] = [] // 選択済みのハンドを保持
+    @State private var selectedHands: [Hand] = []
     @StateObject private var game = PokerGame()
-    @State private var mode: Mode = .losing // 現在のモード
-    @State private var isInitialized: Bool = false // 初期化フラグ
-    @State private var resultMessage: String = "" // 結果メッセージ
+    @State private var mode: Mode = .losing
+    @State private var isInitialized: Bool = false
+    @State private var resultMessage: String = ""
+    @State private var hasAnswered: Bool = false // 回答済みフラグを追加
 
-    private let handGrid = generateHandGrid() // ハンドのグリッドデータ
+    private let handGrid = generateHandGrid()
 
     enum Mode {
         case winning, losing
@@ -84,7 +85,7 @@ struct ComboView: View {
                     .padding()
             }
             
-            // モード切り替えボタン
+            // モード切り替えボタンと回答/次へボタン
             HStack {
                 Button(action: {
                     mode = .winning
@@ -95,6 +96,7 @@ struct ComboView: View {
                         .foregroundColor(.white)
                         .cornerRadius(8)
                 }
+                .disabled(hasAnswered) // 回答後は無効化
 
                 Button(action: {
                     mode = .losing
@@ -105,27 +107,40 @@ struct ComboView: View {
                         .foregroundColor(.white)
                         .cornerRadius(8)
                 }
-                
-                Button(action: {
-                    // clearSelectedHands()
-                    checkAnswer()
+                .disabled(hasAnswered) // 回答後は無効化
 
-                }) {
-                    Text("回答")
-                        .padding()
-                        .background(Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
+                if !hasAnswered {
+                    Button(action: {
+                        checkAnswer()
+                        hasAnswered = true // 回答済みにする
+                    }) {
+                        Text("回答")
+                            .padding()
+                            .background(Color.blue)
+                            .foregroundColor(.white)
+                            .cornerRadius(8)
+                    }
+                } else {
+                    Button(action: {
+                        nextProblem()
+                    }) {
+                        Text("次へ")
+                            .padding()
+                            .background(Color.blue)
+                            .foregroundColor(.white)
+                            .cornerRadius(8)
+                    }
                 }
             }
-//            .padding()
 
             // グリッド表示
             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 4), count: 13), spacing: 4) {
                 ForEach(handGrid.flatMap { $0 }) { hand in
                     HandCell(hand: hand, isSelected: selectedHands.contains(where: { $0.id == hand.id }))
                         .onTapGesture {
-                            toggleHandSelection(hand)
+                            if !hasAnswered { // 回答前のみタップ可能
+                                toggleHandSelection(hand)
+                            }
                         }
                 }
             }
@@ -161,28 +176,64 @@ struct ComboView: View {
         game.startFromRiver()
     }
 
-        // 回答ボタンのアクション
+    // 回答ボタンのアクション
     private func checkAnswer() {
-        game.startFromRiver()
         let myBestHandRank = game.evaluator.evaluateHand(cards: game.hand + game.board)
         let selectedHandsRanks = selectedHands.map { hand in
-            // 仮のロジック: 各ハンドの役を評価
-            // 実際には、ハンドのカードを生成して評価する必要があります
             return game.evaluator.evaluateHand(cards: generateCardsForHand(hand) + game.board)
         }
 
-        if selectedHandsRanks.allSatisfy({ $0 > myBestHandRank }) {
-            resultMessage = "正解！選択したハンドはすべてあなたのハンドより強いです。"
+        // 正解のコンボ数を計算
+        let allHands = handGrid.flatMap { $0 }
+        let correctHandsCount = allHands.filter { hand in
+            let rank = game.evaluator.evaluateHand(cards: generateCardsForHand(hand) + game.board)
+            return mode == .losing ? rank > myBestHandRank : rank < myBestHandRank
+        }.count
+
+        let selectedCount = selectedHands.count
+
+        if mode == .losing {
+            if selectedHandsRanks.allSatisfy({ $0 > myBestHandRank }) {
+                resultMessage = "正解！\n選択: \(selectedCount)コンボ / 正解: \(correctHandsCount)コンボ"
+            } else {
+                resultMessage = "不正解\n選択: \(selectedCount)コンボ / 正解: \(correctHandsCount)コンボ"
+            }
         } else {
-            resultMessage = "不正解。選択したハンドの中にあなたのハンドより弱いものがあります。"
+            if selectedHandsRanks.allSatisfy({ $0 < myBestHandRank }) {
+                resultMessage = "正解！\n選択: \(selectedCount)コンボ / 正解: \(correctHandsCount)コンボ"
+            } else {
+                resultMessage = "不正解\n選択: \(selectedCount)コンボ / 正解: \(correctHandsCount)コンボ"
+            }
         }
     }
 
     // ハンドのカードを生成する仮の関数
     private func generateCardsForHand(_ hand: Hand) -> [Card] {
-        // ここでHandのnameを解析してCardの配列を生成するロジックを実装
-        // 例: "AKs" -> [Card(rank: .ace, suit: .spades), Card(rank: .king, suit: .spades)]
-        return []
+        let name = hand.name
+        
+        // スーテッドかオフスーテッドかを判定
+        let isSuited = name.hasSuffix("s")
+        
+        // カードのランクを取得
+        let rankChars = Array(name.prefix(2))
+        guard rankChars.count == 2,
+              let firstRank = Rank(String(rankChars[0])),
+              let secondRank = Rank(String(rankChars[1])) else {
+            return []
+        }
+        
+        // スーテッドの場合は同じスート、オフスーテッドの場合は異なるスートを使用
+        if isSuited {
+            return [
+                Card(rank: firstRank, suit: .spades),
+                Card(rank: secondRank, suit: .spades)
+            ]
+        } else {
+            return [
+                Card(rank: firstRank, suit: .spades),
+                Card(rank: secondRank, suit: .hearts)
+            ]
+        }
     }
 
     // ハンド選択/解除の切り替え
@@ -192,6 +243,14 @@ struct ComboView: View {
         } else {
             selectedHands.append(hand) // 新しく選択
         }
+    }
+
+    // 次の問題へ進むメソッド
+    private func nextProblem() {
+        selectedHands = []
+        resultMessage = ""
+        hasAnswered = false
+        game.startFromRiver()
     }
 }
 

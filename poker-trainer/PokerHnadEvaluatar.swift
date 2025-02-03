@@ -15,11 +15,42 @@ enum Suit: String {
 }
 
 enum Rank: Int, Comparable {
-    case two = 2, three, four, five, six, seven, eight, nine, ten
-    case jack, queen, king, ace
+    case two = 2
+    case three = 3
+    case four = 4
+    case five = 5
+    case six = 6
+    case seven = 7
+    case eight = 8
+    case nine = 9
+    case ten = 10
+    case jack = 11
+    case queen = 12
+    case king = 13
+    case ace = 14
 
     static func < (lhs: Rank, rhs: Rank) -> Bool {
         return lhs.rawValue < rhs.rawValue
+    }
+    
+    init?(_ string: String) {
+        switch string.uppercased() {
+        case "A": self = .ace
+        case "K": self = .king
+        case "Q": self = .queen
+        case "J": self = .jack
+        case "T": self = .ten
+        case "9": self = .nine
+        case "8": self = .eight
+        case "7": self = .seven
+        case "6": self = .six
+        case "5": self = .five
+        case "4": self = .four
+        case "3": self = .three
+        case "2": self = .two
+        default:
+            return nil
+        }
     }
 }
 
