@@ -46,7 +46,9 @@ struct ComboView: View {
     @State private var mode: Mode = .losing
     @State private var isInitialized: Bool = false
     @State private var resultMessage: String = ""
-    @State private var hasAnswered: Bool = false // 回答済みフラグを追加
+    @State private var hasAnswered: Bool = false
+    @State private var isCorrect: Bool = false
+    @State private var showResultAnimation: Bool = false
 
     private let handGrid = generateHandGrid()
 
@@ -79,10 +81,20 @@ struct ComboView: View {
 
             // 結果メッセージの表示
             if !resultMessage.isEmpty {
-                Text(resultMessage)
-                    .font(.headline)
-                    .foregroundColor(.blue)
-                    .padding()
+                VStack {
+                    Image(systemName: isCorrect ? "checkmark.circle.fill" : "xmark.circle.fill")
+                        .font(.system(size: 60))
+                        .foregroundColor(isCorrect ? .green : .red)
+                        .scaleEffect(showResultAnimation ? 1.0 : 0.1)
+                        .animation(.spring(response: 0.3, dampingFraction: 0.5), value: showResultAnimation)
+                    
+                    Text(resultMessage)
+                        .font(.headline)
+                        .foregroundColor(isCorrect ? .green : .red)
+                        .padding()
+                        .opacity(showResultAnimation ? 1.0 : 0.0)
+                        .animation(.easeIn(duration: 0.2).delay(0.3), value: showResultAnimation)
+                }
             }
             
             // モード切り替えボタンと回答/次へボタン
@@ -145,23 +157,6 @@ struct ComboView: View {
                 }
             }
             .padding(.top, 5)
-
-//            // 選択済みハンドのリスト
-//            VStack(alignment: .leading) {
-//                Text("選択済みのハンド:")
-//                    .font(.headline)
-//                    .padding(.top)
-//
-//                ScrollView {
-//                    ForEach(selectedHands) { hand in
-//                        Text(hand.name)
-//                            .padding(4)
-//                            .background(Color.gray.opacity(0.2))
-//                            .cornerRadius(4)
-//                    }
-//                }
-//            }
-//            .padding()
         }
         .onAppear {
             if !isInitialized {
@@ -171,39 +166,34 @@ struct ComboView: View {
         }
     }
     
-    private func clearSelectedHands() {
-        selectedHands = []
-        game.startFromRiver()
-    }
-
     // 回答ボタンのアクション
     private func checkAnswer() {
         let myBestHandRank = game.evaluator.evaluateHand(cards: game.hand + game.board)
-        let selectedHandsRanks = selectedHands.map { hand in
-            return game.evaluator.evaluateHand(cards: generateCardsForHand(hand) + game.board)
-        }
 
-        // 正解のコンボ数を計算
+        // 正解のコンボを計算
         let allHands = handGrid.flatMap { $0 }
-        let correctHandsCount = allHands.filter { hand in
+        let correctHands = allHands.filter { hand in
             let rank = game.evaluator.evaluateHand(cards: generateCardsForHand(hand) + game.board)
             return mode == .losing ? rank > myBestHandRank : rank < myBestHandRank
-        }.count
+        }
 
-        let selectedCount = selectedHands.count
-
-        if mode == .losing {
-            if selectedHandsRanks.allSatisfy({ $0 > myBestHandRank }) {
-                resultMessage = "正解！\n選択: \(selectedCount)コンボ / 正解: \(correctHandsCount)コンボ"
-            } else {
-                resultMessage = "不正解\n選択: \(selectedCount)コンボ / 正解: \(correctHandsCount)コンボ"
-            }
-        } else {
-            if selectedHandsRanks.allSatisfy({ $0 < myBestHandRank }) {
-                resultMessage = "正解！\n選択: \(selectedCount)コンボ / 正解: \(correctHandsCount)コンボ"
-            } else {
-                resultMessage = "不正解\n選択: \(selectedCount)コンボ / 正解: \(correctHandsCount)コンボ"
-            }
+        // 選択したハンドが正しいかチェック
+        let selectedHandsSet = Set(selectedHands.map { $0.name })
+        let correctHandsSet = Set(correctHands.map { $0.name })
+        
+        // 完全一致の場合のみ正解
+        isCorrect = selectedHandsSet == correctHandsSet
+        
+        // 結果メッセージの設定
+        resultMessage = isCorrect ? 
+            "選択: \(selectedHands.count)コンボ / 正解: \(correctHands.count)コンボ" :
+            "選択: \(selectedHands.count)コンボ / 正解: \(correctHands.count)コンボ"
+        
+        hasAnswered = true
+        
+        // アニメーションの開始
+        withAnimation {
+            showResultAnimation = true
         }
     }
 
@@ -247,10 +237,18 @@ struct ComboView: View {
 
     // 次の問題へ進むメソッド
     private func nextProblem() {
-        selectedHands = []
-        resultMessage = ""
-        hasAnswered = false
-        game.startFromRiver()
+        withAnimation {
+            showResultAnimation = false
+        }
+        
+        // アニメーション完了後に状態をリセット
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            selectedHands = []
+            resultMessage = ""
+            hasAnswered = false
+            isCorrect = false
+            game.startFromRiver()
+        }
     }
 }
 
