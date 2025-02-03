@@ -49,6 +49,7 @@ struct ComboView: View {
     @State private var hasAnswered: Bool = false
     @State private var isCorrect: Bool = false
     @State private var showResultAnimation: Bool = false
+    @State private var missedHands: Set<UUID> = []
 
     private let handGrid = generateHandGrid()
 
@@ -146,12 +147,16 @@ struct ComboView: View {
             // グリッド表示
             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 4), count: 13), spacing: 4) {
                 ForEach(handGrid.flatMap { $0 }) { hand in
-                    HandCell(hand: hand, isSelected: selectedHands.contains(where: { $0.id == hand.id }))
-                        .onTapGesture {
-                            if !hasAnswered { // 回答前のみタップ可能
-                                toggleHandSelection(hand)
-                            }
+                    HandCell(
+                        hand: hand,
+                        isSelected: selectedHands.contains(where: { $0.id == hand.id }),
+                        isMissed: missedHands.contains(hand.id)
+                    )
+                    .onTapGesture {
+                        if !hasAnswered {
+                            toggleHandSelection(hand)
                         }
+                    }
                 }
             }
             .padding(.top, 5)
@@ -175,21 +180,20 @@ struct ComboView: View {
             return mode == .losing ? rank > myBestHandRank : rank < myBestHandRank
         }
 
-        // 選択したハンドが正しいかチェック
         let selectedHandsSet = Set(selectedHands.map { $0.name })
         let correctHandsSet = Set(correctHands.map { $0.name })
         
-        // 完全一致の場合のみ正解
+        // 選択されていない正解のハンドを記録
+        missedHands = Set(correctHands.filter { !selectedHandsSet.contains($0.name) }.map { $0.id })
+        
         isCorrect = selectedHandsSet == correctHandsSet
         
-        // 結果メッセージの設定
         resultMessage = isCorrect ? 
             "選択: \(selectedHands.count)コンボ / 正解: \(correctHands.count)コンボ" :
             "選択: \(selectedHands.count)コンボ / 正解: \(correctHands.count)コンボ"
         
         hasAnswered = true
         
-        // アニメーションの開始
         withAnimation {
             showResultAnimation = true
         }
@@ -239,9 +243,9 @@ struct ComboView: View {
             showResultAnimation = false
         }
         
-        // アニメーション完了後に状態をリセット
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             selectedHands = []
+            missedHands = [] // missedHandsをリセット
             resultMessage = ""
             hasAnswered = false
             isCorrect = false
@@ -254,12 +258,17 @@ struct ComboView: View {
 struct HandCell: View {
     let hand: Hand
     let isSelected: Bool
+    let isMissed: Bool
 
     var body: some View {
         Text(hand.name)
             .font(.system(size: 12, weight: .bold))
             .frame(width: 30, height: 30)
-            .background(isSelected ? Color.blue : Color.gray.opacity(0.5))
+            .background(
+                isMissed ? Color.red :
+                isSelected ? Color.blue :
+                Color.gray.opacity(0.5)
+            )
             .foregroundColor(.white)
             .cornerRadius(4)
     }
