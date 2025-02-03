@@ -48,6 +48,44 @@ class PokerGame: ObservableObject {
         feedback = ""
     }
     
+    // プリフロップレンジを定義
+    private func isHandInRange(_ card1: Card, _ card2: Card) -> Bool {
+        let ranks = [card1.rank, card2.rank].sorted { $0.rawValue > $1.rawValue }
+        let suited = card1.suit == card2.suit
+        
+        // ペア
+        if ranks[0] == ranks[1] {
+            return true
+        }
+        
+        // スーテッド
+        if suited {
+            // AKs-A2s, KQs-K9s, QJs-Q9s, JTs-J9s, T9s-T8s, 98s, 87s, 76s, 65s
+            if ranks[0] == .ace || 
+               (ranks[0] == .king && ranks[1].rawValue >= Rank.nine.rawValue) ||
+               (ranks[0] == .queen && ranks[1].rawValue >= Rank.nine.rawValue) ||
+               (ranks[0] == .jack && ranks[1].rawValue >= Rank.nine.rawValue) ||
+               (ranks[0] == .ten && ranks[1].rawValue >= Rank.eight.rawValue) ||
+               (ranks[0] == .nine && ranks[1] == .eight) ||
+               (ranks[0] == .eight && ranks[1] == .seven) ||
+               (ranks[0] == .seven && ranks[1] == .six) ||
+               (ranks[0] == .six && ranks[1] == .five) {
+                return true
+            }
+        } else {
+            // オフスーツ
+            // AKo-ATo, KQo-KJo, QJo-QTo, JTo
+            if (ranks[0] == .ace && ranks[1].rawValue >= Rank.ten.rawValue) ||
+               (ranks[0] == .king && ranks[1].rawValue >= Rank.jack.rawValue) ||
+               (ranks[0] == .queen && ranks[1].rawValue >= Rank.ten.rawValue) ||
+               (ranks[0] == .jack && ranks[1] == .ten) {
+                return true
+            }
+        }
+        
+        return false
+    }
+    
     private func createDeck() -> [Card] {
         var deck: [Card] = []
         for suit in suits {
@@ -55,7 +93,22 @@ class PokerGame: ObservableObject {
                 deck.append(Card(rank: rank, suit: suit))
             }
         }
-        return deck.shuffled()
+        deck.shuffle()
+        
+        // レンジに合う手札が見つかるまで探す
+        var validHand: [Card] = []
+        var i = 0
+        while i < deck.count - 1 {
+            if isHandInRange(deck[i], deck[i + 1]) {
+                validHand = [deck[i], deck[i + 1]]
+                deck.remove(at: i + 1)
+                deck.remove(at: i)
+                break
+            }
+            i += 1
+        }
+        
+        return validHand + deck
     }
     
     private func calculateOuts() -> Int {

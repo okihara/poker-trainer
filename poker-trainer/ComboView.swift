@@ -55,8 +55,6 @@ struct ComboView: View {
     enum Mode {
         case winning, losing
     }
-    
-
 
     var body: some View {
         VStack {
