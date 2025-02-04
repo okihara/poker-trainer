@@ -302,11 +302,22 @@ class PokerHandEvaluator {
     }
 
     private func checkFullHouse(cards: [Card]) -> [Rank]? {
-        let rankCounts = Dictionary(grouping: cards, by: { $0.rank }).mapValues { $0.count }
-        if let threeRank = rankCounts.first(where: { $0.value == 3 })?.key,
-           let pairRank = rankCounts.first(where: { $0.value == 2 })?.key {
-            return [threeRank, pairRank]
+        let rankCounts = Dictionary(grouping: cards, by: { $0.rank })
+            .mapValues { $0.count }
+            .sorted { $0.value > $1.value } // カウントの多い順にソート
+        
+        // スリーカードを探す
+        guard let threeOfAKind = rankCounts.first(where: { $0.value >= 3 }) else {
+            return nil
         }
+        
+        // 残りのカードからペアを探す（スリーカードと異なるランクのみ）
+        let remainingPairs = rankCounts.filter { $0.key != threeOfAKind.key && $0.value >= 2 }
+        
+        if let pair = remainingPairs.first {
+            return [threeOfAKind.key, pair.key]
+        }
+        
         return nil
     }
 

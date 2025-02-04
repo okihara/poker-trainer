@@ -42,4 +42,23 @@ final class test2: XCTestCase {
         ]
         XCTAssertEqual(PokerHandEvaluator().calculateOuts(hand: hand, board: board).count, 5)
     }
+
+    func testThreeOfAKind() throws {
+        let hand = [
+            Card(rank: .six, suit: .hearts),
+            Card(rank: .king, suit: .spades)
+        ]
+        let board = [
+            Card(rank: .ten, suit: .spades),
+            Card(rank: .eight, suit: .clubs),
+            Card(rank: .six, suit: .clubs),
+            Card(rank: .king, suit: .diamonds),
+            Card(rank: .king, suit: .hearts)
+        ]
+        
+        let result = PokerHandEvaluator().evaluateHand(cards: hand + board)
+        XCTAssertEqual(result.rankType, .fullHouse, "AhKs + 10s8c6cKdKh はフルハウスになるはずです")
+        XCTAssertEqual(result.ranks[0], .king, "フルハウスのスリーカードはキングになるはずです")
+        XCTAssertEqual(result.ranks[1], .six, "フルハウスのペアはエースになるはずです")
+    }
 }
