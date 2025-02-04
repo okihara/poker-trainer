@@ -50,6 +50,7 @@ struct ComboView: View {
     @State private var isCorrect: Bool = false
     @State private var showResultAnimation: Bool = false
     @State private var missedHands: Set<UUID> = []
+    @State private var correctHands: Set<UUID> = []
 
     private let handGrid = generateHandGrid()
 
@@ -150,7 +151,9 @@ struct ComboView: View {
                     HandCell(
                         hand: hand,
                         isSelected: selectedHands.contains(where: { $0.id == hand.id }),
-                        isMissed: missedHands.contains(hand.id)
+                        isMissed: missedHands.contains(hand.id),
+                        hasAnswered: hasAnswered,
+                        isCorrectHand: correctHands.contains(hand.id)
                     )
                     .onTapGesture {
                         if !hasAnswered {
@@ -182,21 +185,24 @@ struct ComboView: View {
         }
         
         // フィルターされたハンドから正解のコンボを計算
-        let correctHands = rangeHands.filter { hand in
+        let correctHandArray = rangeHands.filter { hand in
             let rank = game.evaluator.evaluateHand(cards: generateCardsForHand(hand) + game.board)
             return mode == .losing ? rank > myBestHandRank : rank < myBestHandRank
         }
         
+        // 正解のハンドのIDを保存
+        correctHands = Set(correctHandArray.map { $0.id })
+        
         let selectedHandsSet = Set(selectedHands.map { $0.name })
-        let correctHandsSet = Set(correctHands.map { $0.name })
+        let correctHandsNameSet = Set(correctHandArray.map { $0.name })
         
         // 選択されていない正解のハンドを記録
-        missedHands = Set(correctHands.filter { !selectedHandsSet.contains($0.name) }.map { $0.id })
+        missedHands = Set(correctHandArray.filter { !selectedHandsSet.contains($0.name) }.map { $0.id })
         
-        isCorrect = selectedHandsSet == correctHandsSet
+        isCorrect = selectedHandsSet == correctHandsNameSet
         resultMessage = isCorrect ? 
-            "選択: \(selectedHands.count)コンボ / 正解: \(correctHands.count)コンボ" :
-            "選択: \(selectedHands.count)コンボ / 正解: \(correctHands.count)コンボ"
+            "選択: \(selectedHands.count)コンボ / 正解: \(correctHandArray.count)コンボ" :
+            "選択: \(selectedHands.count)コンボ / 正解: \(correctHandArray.count)コンボ"
         
         hasAnswered = true
         
@@ -220,18 +226,36 @@ struct ComboView: View {
             return []
         }
         
-        // スーテッドの場合は同じスート、オフスーテッドの場合は異なるスートを使用
+        // ボードで使用されているカードを確認
+        let usedCards = Set(game.board + game.hand)
+        
+        // 使用可能なスートの組み合わせを見つける
+        let allSuits: [Suit] = [.spades, .hearts, .diamonds, .clubs]
+        
         if isSuited {
-            return [
-                Card(rank: firstRank, suit: .spades),
-                Card(rank: secondRank, suit: .spades)
-            ]
+            // スーテッドの場合、同じスートで使用可能な組み合わせを探す
+            for suit in allSuits {
+                let card1 = Card(rank: firstRank, suit: suit)
+                let card2 = Card(rank: secondRank, suit: suit)
+                if !usedCards.contains(card1) && !usedCards.contains(card2) {
+                    return [card1, card2]
+                }
+            }
         } else {
-            return [
-                Card(rank: firstRank, suit: .spades),
-                Card(rank: secondRank, suit: .hearts)
-            ]
+            // オフスーテッドの場合、異なるスートで使用可能な組み合わせを探す
+            for suit1 in allSuits {
+                for suit2 in allSuits where suit1 != suit2 {
+                    let card1 = Card(rank: firstRank, suit: suit1)
+                    let card2 = Card(rank: secondRank, suit: suit2)
+                    if !usedCards.contains(card1) && !usedCards.contains(card2) {
+                        return [card1, card2]
+                    }
+                }
+            }
         }
+        
+        // 有効な組み合わせが見つからない場合は空配列を返す
+        return []
     }
 
     // ハンド選択/解除の切り替え
@@ -251,7 +275,8 @@ struct ComboView: View {
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             selectedHands = []
-            missedHands = [] // missedHandsをリセット
+            missedHands = []
+            correctHands = []
             resultMessage = ""
             hasAnswered = false
             isCorrect = false
@@ -265,16 +290,29 @@ struct HandCell: View {
     let hand: Hand
     let isSelected: Bool
     let isMissed: Bool
+    let hasAnswered: Bool
+    let isCorrectHand: Bool
+    
+    var backgroundColor: Color {
+        if hasAnswered {
+            if isSelected && isCorrectHand {
+                return .green     // 正解のハンドを選択
+            } else if isSelected {
+                return .blue      // 不正解のハンドを選択
+            } else if isMissed {
+                return .red       // 選択されなかった正解
+            }
+        } else if isSelected {
+            return .blue      // 未回答時の選択状態
+        }
+        return Color.gray.opacity(0.5)  // 未選択
+    }
 
     var body: some View {
         Text(hand.name)
             .font(.system(size: 12, weight: .bold))
             .frame(width: 30, height: 30)
-            .background(
-                isMissed ? Color.red :
-                isSelected ? Color.blue :
-                Color.gray.opacity(0.5)
-            )
+            .background(backgroundColor)
             .foregroundColor(.white)
             .cornerRadius(4)
     }
