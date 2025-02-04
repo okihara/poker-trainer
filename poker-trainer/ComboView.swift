@@ -172,14 +172,21 @@ struct ComboView: View {
     // 回答ボタンのアクション
     private func checkAnswer() {
         let myBestHandRank = game.evaluator.evaluateHand(cards: game.hand + game.board)
-
-        // 正解のコンボを計算
+        
+        // まずプリフロップレンジでフィルター
         let allHands = handGrid.flatMap { $0 }
-        let correctHands = allHands.filter { hand in
+        let rangeHands = allHands.filter { hand in
+            let cards = generateCardsForHand(hand)
+            guard cards.count == 2 else { return false }
+            return game.isHandInRange(cards[0], cards[1])
+        }
+        
+        // フィルターされたハンドから正解のコンボを計算
+        let correctHands = rangeHands.filter { hand in
             let rank = game.evaluator.evaluateHand(cards: generateCardsForHand(hand) + game.board)
             return mode == .losing ? rank > myBestHandRank : rank < myBestHandRank
         }
-
+        
         let selectedHandsSet = Set(selectedHands.map { $0.name })
         let correctHandsSet = Set(correctHands.map { $0.name })
         
@@ -187,7 +194,6 @@ struct ComboView: View {
         missedHands = Set(correctHands.filter { !selectedHandsSet.contains($0.name) }.map { $0.id })
         
         isCorrect = selectedHandsSet == correctHandsSet
-        
         resultMessage = isCorrect ? 
             "選択: \(selectedHands.count)コンボ / 正解: \(correctHands.count)コンボ" :
             "選択: \(selectedHands.count)コンボ / 正解: \(correctHands.count)コンボ"

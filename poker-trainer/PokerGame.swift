@@ -49,7 +49,7 @@ class PokerGame: ObservableObject {
     }
     
     // プリフロップレンジを定義
-    private func isHandInRange(_ card1: Card, _ card2: Card) -> Bool {
+    func isHandInRange(_ card1: Card, _ card2: Card) -> Bool {
         let ranks = [card1.rank, card2.rank].sorted { $0.rawValue > $1.rawValue }
         let suited = card1.suit == card2.suit
         
