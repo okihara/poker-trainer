@@ -161,7 +161,7 @@ class PokerHandEvaluator {
             fatalError("カードの枚数は4枚以上である必要があります")
         }
 
-        let sortedCards = cards.sorted()
+        let sortedCards = cards.sorted(by: >)
         let isFlush = checkFlush(cards: sortedCards)
         let isStraight = checkStraight(cards: sortedCards)
 
@@ -206,12 +206,16 @@ class PokerHandEvaluator {
             let newBoardAndHandRank = evaluateHand(cards: newBoard + hand)
 
             // ターンの6枚の役がフロップの5枚の役より強かったらアウツになりえる
-            if newBoardAndHandRank > handAndBoardRank {
+            if newBoardAndHandRank.rankType.rawValue > handAndBoardRank.rankType.rawValue {
                 print("************")
                 print("\(card.str): \(newBoardAndHandRank.rankType) > \(handAndBoardRank.rankType)")
                 // ボードだけの役より強い場合のみアウツに
-                if newBoardAndHandRank > newBoardRank {
+                if newBoardAndHandRank.rankType.rawValue > newBoardRank.rankType.rawValue {
                     print("\(card.str): \(newBoardAndHandRank.rankType) > \(newBoardRank.rankType)")
+                    
+                    if newBoardAndHandRank.rankType == .highCard {
+                        continue
+                    }
 
                     if newBoardAndHandRank.rankType == .twoPair {
                         let contains = hand.map {$0.rank}.contains(card.rank)
@@ -296,7 +300,7 @@ class PokerHandEvaluator {
         let rankCounts = Dictionary(grouping: cards, by: { $0.rank }).mapValues { $0.count }
         if let fourRank = rankCounts.first(where: { $0.value == 4 })?.key {
             let remainingRanks = cards.filter { $0.rank != fourRank }.map { $0.rank }
-            return [fourRank] + remainingRanks
+            return [fourRank] + remainingRanks.sorted(by: >)
         }
         return nil
     }
@@ -325,7 +329,7 @@ class PokerHandEvaluator {
         let rankCounts = Dictionary(grouping: cards, by: { $0.rank }).mapValues { $0.count }
         if let threeRank = rankCounts.first(where: { $0.value == 3 })?.key {
             let remainingRanks = cards.filter { $0.rank != threeRank }.map { $0.rank }
-            return [threeRank] + remainingRanks
+            return [threeRank] + remainingRanks.sorted(by: >)
         }
         return nil
     }
@@ -335,7 +339,7 @@ class PokerHandEvaluator {
         let pairs = rankCounts.filter { $0.value == 2 }.keys.sorted(by: >)
         if pairs.count >= 2 {
             let remainingRanks = cards.filter { !pairs.contains($0.rank) }.map { $0.rank }
-            return Array(pairs.prefix(2)) + remainingRanks
+            return Array(pairs.prefix(2)) + remainingRanks.sorted(by: >)
         }
         return nil
     }
@@ -344,7 +348,7 @@ class PokerHandEvaluator {
         let rankCounts = Dictionary(grouping: cards, by: { $0.rank }).mapValues { $0.count }
         if let pairRank = rankCounts.first(where: { $0.value == 2 })?.key {
             let remainingRanks = cards.filter { $0.rank != pairRank }.map { $0.rank }
-            return [pairRank] + remainingRanks
+            return [pairRank] + remainingRanks.sorted(by: >)
         }
         return nil
     }

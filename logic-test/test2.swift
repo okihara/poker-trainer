@@ -61,4 +61,25 @@ final class test2: XCTestCase {
         XCTAssertEqual(result.ranks[0], .king, "フルハウスのスリーカードはキングになるはずです")
         XCTAssertEqual(result.ranks[1], .six, "フルハウスのペアはエースになるはずです")
     }
+    
+    func testBoardOnePair() throws {
+        let hand = [
+            Card(rank: .ten, suit: .clubs),
+            Card(rank: .queen, suit: .diamonds)
+        ]
+        let board = [
+            Card(rank: .seven, suit: .spades),
+            Card(rank: .five, suit: .clubs),
+            Card(rank: .two, suit: .hearts),
+            Card(rank: .seven, suit: .clubs),
+            Card(rank: .king, suit: .diamonds)
+        ]
+        
+        let result = PokerHandEvaluator().evaluateHand(cards: hand + board)
+        print(result)
+        XCTAssertEqual(result.rankType, .onePair)
+        XCTAssertEqual(result.ranks[0], .seven)
+        XCTAssertEqual(result.ranks[1], .king)
+        XCTAssertEqual(result.ranks[2], .queen)
+    }
 }

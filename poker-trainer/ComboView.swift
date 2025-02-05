@@ -8,41 +8,9 @@
 import SwiftUI
 
 
-// ハンドのデータモデル
-struct Hand: Identifiable {
-    let id = UUID()
-    let name: String // 例: "AKs", "AKo", "QQ"
-    let type: HandType
-}
-
-enum HandType {
-    case suited, offsuit, pair
-}
-
-// デモ用のハンドデータを生成
-func generateHandGrid() -> [[Hand]] {
-    let ranks = ["A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2"]
-    var grid: [[Hand]] = []
-
-    for i in 0..<13 {
-        var row: [Hand] = []
-        for j in 0..<13 {
-            if i == j {
-                row.append(Hand(name: "\(ranks[i])\(ranks[j])", type: .pair)) // ポケットペア
-            } else if i < j {
-                row.append(Hand(name: "\(ranks[i])\(ranks[j])s", type: .suited)) // スーテッド
-            } else {
-                row.append(Hand(name: "\(ranks[j])\(ranks[i])o", type: .offsuit)) // オフスート
-            }
-        }
-        grid.append(row)
-    }
-    return grid
-}
-
 struct ComboView: View {
-    @State private var selectedHands: [Hand] = []
     @StateObject private var game = PokerGame()
+    @State private var selectedHands: [Hand] = []
     @State private var mode: Mode = .losing
     @State private var isInitialized: Bool = false
     @State private var resultMessage: String = ""
@@ -52,7 +20,7 @@ struct ComboView: View {
     @State private var missedHands: Set<UUID> = []
     @State private var correctHands: Set<UUID> = []
 
-    private let handGrid = generateHandGrid()
+    private let handGrid = PokerLogic.generateHandGrid()
 
     enum Mode {
         case winning, losing
@@ -174,88 +142,66 @@ struct ComboView: View {
     
     // 回答ボタンのアクション
     private func checkAnswer() {
+        // プレイヤーの手札の最高ランクを評価
         let myBestHandRank = game.evaluator.evaluateHand(cards: game.hand + game.board)
         
-        // まずプリフロップレンジでフィルター
+        // すべての可能なハンドの組み合わせを取得
         let allHands = handGrid.flatMap { $0 }
-        let rangeHands = allHands.filter { hand in
-            let cards = generateCardsForHand(hand)
-            guard cards.count == 2 else { return false }
-            return game.isHandInRange(cards[0], cards[1])
-        }
+        var rangeHands: [Hand] = []
+        // すでに使用されているカードを記録
+        let usedCards = Set(game.board + game.hand)
         
-        // フィルターされたハンドから正解のコンボを計算
+        // 各ハンドについて、実現可能な組み合わせを確認
+        for hand in allHands {
+            let possibleCombos = PokerLogic.generateAllPossibleCombos(for: hand, usedCards: usedCards)
+            // 実現可能な組み合わせがあり、かつレンジ内に含まれる場合
+            if !possibleCombos.isEmpty && possibleCombos.contains(where: { combo in
+                game.isHandInRange(combo[0], combo[1])
+            }) {
+                print("hand: \(hand.name)")
+                print("possibleCombos: \(possibleCombos.map { "\($0[0].str)\($0[1].str)" })")
+                rangeHands.append(hand)
+            }
+        }
+        print("rangeHands: \(rangeHands.map { $0.name })")
+        
+        // レンジ内のハンドから、モードに応じて勝ち/負けのコンボを抽出
         let correctHandArray = rangeHands.filter { hand in
-            let rank = game.evaluator.evaluateHand(cards: generateCardsForHand(hand) + game.board)
-            return mode == .losing ? rank > myBestHandRank : rank < myBestHandRank
+            let possibleCombos = PokerLogic.generateAllPossibleCombos(for: hand, usedCards: usedCards)
+            return possibleCombos.contains { combo in
+                let rank = game.evaluator.evaluateHand(cards: combo + game.board)
+                print("rank: \(rank)")
+                print("combo \(combo.map { $0.str })")
+                // losingモードの場合は自分より強い手、winningモードの場合は自分より弱い手を探す
+                return mode == .losing ? rank > myBestHandRank : rank < myBestHandRank
+            }
         }
         
-        // 正解のハンドのIDを保存
+        // 正解のハンドをセットとして保存
         correctHands = Set(correctHandArray.map { $0.id })
         
+        // 選択されたハンドと正解のハンドを名前でセット化
         let selectedHandsSet = Set(selectedHands.map { $0.name })
         let correctHandsNameSet = Set(correctHandArray.map { $0.name })
         
-        // 選択されていない正解のハンドを記録
+        // 見逃した（選択されなかった）正解のハンドを記録
         missedHands = Set(correctHandArray.filter { !selectedHandsSet.contains($0.name) }.map { $0.id })
         
+        // 選択したハンドと正解のハンドが完全に一致するか確認
         isCorrect = selectedHandsSet == correctHandsNameSet
+
+        // 結果メッセージを設定
         resultMessage = isCorrect ? 
-            "選択: \(selectedHands.count)コンボ / 正解: \(correctHandArray.count)コンボ" :
-            "選択: \(selectedHands.count)コンボ / 正解: \(correctHandArray.count)コンボ"
+            "選択: \(selectedHands.count)ハンド / 正解: \(correctHandArray.count)ハンド" :
+            "選択: \(selectedHands.count)ハンド / 正解: \(correctHandArray.count)ハンド"
         
+        // 回答済みフラグを設定
         hasAnswered = true
         
+        // 結果アニメーションを表示
         withAnimation {
             showResultAnimation = true
         }
-    }
-
-    // ハンドのカードを生成する仮の関数
-    private func generateCardsForHand(_ hand: Hand) -> [Card] {
-        let name = hand.name
-        
-        // スーテッドかオフスーテッドかを判定
-        let isSuited = name.hasSuffix("s")
-        
-        // カードのランクを取得
-        let rankChars = Array(name.prefix(2))
-        guard rankChars.count == 2,
-              let firstRank = Rank(String(rankChars[0])),
-              let secondRank = Rank(String(rankChars[1])) else {
-            return []
-        }
-        
-        // ボードで使用されているカードを確認
-        let usedCards = Set(game.board + game.hand)
-        
-        // 使用可能なスートの組み合わせを見つける
-        let allSuits: [Suit] = [.spades, .hearts, .diamonds, .clubs]
-        
-        if isSuited {
-            // スーテッドの場合、同じスートで使用可能な組み合わせを探す
-            for suit in allSuits {
-                let card1 = Card(rank: firstRank, suit: suit)
-                let card2 = Card(rank: secondRank, suit: suit)
-                if !usedCards.contains(card1) && !usedCards.contains(card2) {
-                    return [card1, card2]
-                }
-            }
-        } else {
-            // オフスーテッドの場合、異なるスートで使用可能な組み合わせを探す
-            for suit1 in allSuits {
-                for suit2 in allSuits where suit1 != suit2 {
-                    let card1 = Card(rank: firstRank, suit: suit1)
-                    let card2 = Card(rank: secondRank, suit: suit2)
-                    if !usedCards.contains(card1) && !usedCards.contains(card2) {
-                        return [card1, card2]
-                    }
-                }
-            }
-        }
-        
-        // 有効な組み合わせが見つからない場合は空配列を返す
-        return []
     }
 
     // ハンド選択/解除の切り替え
