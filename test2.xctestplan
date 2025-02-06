@@ -1,0 +1,25 @@
+{
+  "configurations" : [
+    {
+      "id" : "39C5322C-48C3-4918-8ECA-AAAB3831FEB5",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:poker-trainer.xcodeproj",
+        "identifier" : "446D9F532D487DE200F6B343",
+        "name" : "test2"
+      }
+    }
+  ],
+  "version" : 1
+}

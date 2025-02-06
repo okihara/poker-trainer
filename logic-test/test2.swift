@@ -17,19 +17,6 @@ final class test2: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func testExample() throws {
-        // フルハウスのテストケース
-        let fullHouseCards = [
-            Card(rank: .three, suit: .hearts),
-            Card(rank: .three, suit: .diamonds),
-            Card(rank: .three, suit: .clubs),
-            Card(rank: .king, suit: .spades),
-            Card(rank: .king, suit: .hearts),
-            Card(rank: .ace, suit: .hearts)
-        ]
-        assert(PokerHandEvaluator().evaluateHand(cards: fullHouseCards).rankType == .fullHouse, "フルハウスのテストに失敗しました")
-    }
-    
     func testOuts() throws {
         let hand = [
             Card(rank: .ace, suit: .spades),
@@ -43,7 +30,23 @@ final class test2: XCTestCase {
         XCTAssertEqual(PokerHandEvaluator().calculateOuts(hand: hand, board: board).count, 5)
     }
 
-    func testThreeOfAKind() throws {
+    func testFullHouse() throws {
+        // フルハウスのテストケース
+        let cards = [
+            Card(rank: .three, suit: .hearts),
+            Card(rank: .three, suit: .diamonds),
+            Card(rank: .three, suit: .clubs),
+            Card(rank: .king, suit: .spades),
+            Card(rank: .king, suit: .hearts),
+            Card(rank: .king, suit: .clubs)
+        ]
+        let result = PokerHandEvaluator().evaluateHand(cards: cards)
+        XCTAssertEqual(result.rankType, .fullHouse)
+        XCTAssertEqual(result.ranks[0], .king)
+        XCTAssertEqual(result.ranks[1], .three)
+    }
+    
+    func testFullHouse2() throws {
         let hand = [
             Card(rank: .six, suit: .hearts),
             Card(rank: .king, suit: .spades)
@@ -61,7 +64,7 @@ final class test2: XCTestCase {
         XCTAssertEqual(result.ranks[0], .king, "フルハウスのスリーカードはキングになるはずです")
         XCTAssertEqual(result.ranks[1], .six, "フルハウスのペアはエースになるはずです")
     }
-    
+        
     func testBoardOnePair() throws {
         let hand = [
             Card(rank: .ten, suit: .clubs),
@@ -81,5 +84,23 @@ final class test2: XCTestCase {
         XCTAssertEqual(result.ranks[0], .seven)
         XCTAssertEqual(result.ranks[1], .king)
         XCTAssertEqual(result.ranks[2], .queen)
+    }
+
+    func testStraight() throws {
+        let hand = [
+            Card(rank: .nine, suit: .hearts),
+            Card(rank: .nine, suit: .spades)
+        ]
+        let board = [
+            Card(rank: .ten, suit: .spades),
+            Card(rank: .six, suit: .hearts),
+            Card(rank: .three, suit: .clubs),
+            Card(rank: .seven, suit: .diamonds),
+            Card(rank: .eight, suit: .hearts)
+        ]
+        
+        let result = PokerHandEvaluator().evaluateHand(cards: hand + board)
+        XCTAssertEqual(result.rankType, .straight)
+        XCTAssertEqual(result.ranks[0], .ten)
     }
 }

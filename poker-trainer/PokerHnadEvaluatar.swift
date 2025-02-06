@@ -275,24 +275,25 @@ class PokerHandEvaluator {
     }
 
     private func checkStraight(cards: [Card]) -> Bool {
-        let sortedRanks = cards.map { $0.rank.rawValue }.sorted()
+        let sortedRanks = Array(Set(cards.map { $0.rank.rawValue })).sorted(by: >)
+        if sortedRanks.count < 5 {
+            return false
+        }
 
-        // 通常のストレートチェック
-        for i in 0..<(sortedRanks.count - 4) {
-            if sortedRanks[i] + 1 == sortedRanks[i + 1],
-               sortedRanks[i + 1] + 1 == sortedRanks[i + 2],
-               sortedRanks[i + 2] + 1 == sortedRanks[i + 3],
-               sortedRanks[i + 3] + 1 == sortedRanks[i + 4] {
+        // エースを1としても扱えるように、エースの場合は1のケースも追加
+        var ranks = sortedRanks
+        if ranks.contains(14) { // エース
+            ranks.append(1)
+        }
+        
+        // 連続した5枚のカードがあるかチェック
+        for i in 0..<(ranks.count - 4) {
+            let straight = ranks[i..<(i + 5)].enumerated()
+            if straight.allSatisfy({ ranks[i] - $0.offset == $0.element }) {
                 return true
             }
         }
-
-        // A-2-3-4-5のストレートチェック
-        let aceLowStraight = [Rank.ace.rawValue, Rank.two.rawValue, Rank.three.rawValue, Rank.four.rawValue, Rank.five.rawValue]
-        if Set(sortedRanks).isSuperset(of: Set(aceLowStraight)) {
-            return true
-        }
-
+        
         return false
     }
 
@@ -308,7 +309,7 @@ class PokerHandEvaluator {
     private func checkFullHouse(cards: [Card]) -> [Rank]? {
         let rankCounts = Dictionary(grouping: cards, by: { $0.rank })
             .mapValues { $0.count }
-            .sorted { $0.value > $1.value } // カウントの多い順にソート
+            .sorted { $0.value > $1.value || ($0.value == $1.value && $0.key > $1.key) } // カウントの多い順、同じ場合はランクの高い順にソート
         
         // スリーカードを探す
         guard let threeOfAKind = rankCounts.first(where: { $0.value >= 3 }) else {

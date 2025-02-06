@@ -54,6 +54,7 @@
 		446D9F5D2D49344A00F6B343 /* ComboView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComboView.swift; sourceTree = "<group>"; };
 		446D9F612D4F833F00F6B343 /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
 		447265502D53C99200D7E4FE /* PokerLogic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PokerLogic.swift; sourceTree = "<group>"; };
+		4473D5CF2D54EA28006D9C0C /* test2.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = test2.xctestplan; sourceTree = "<group>"; };
 		4487533A2D512D3B00FF4112 /* PokerGame.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PokerGame.swift; sourceTree = "<group>"; };
 		44CEEF442D46625C00BE5132 /* PokerHnadEvaluatar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokerHnadEvaluatar.swift; sourceTree = "<group>"; };
 		44EC93D72D40914B0025E01B /* poker-trainer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "poker-trainer.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -115,6 +116,7 @@
 		44EC93CE2D40914B0025E01B = {
 			isa = PBXGroup;
 			children = (
+				4473D5CF2D54EA28006D9C0C /* test2.xctestplan */,
 				446D9F1F2D4871D000F6B343 /* poker-trainer.xctestplan */,
 				44EC93D92D40914B0025E01B /* poker-trainer */,
 				446D9F552D487DE200F6B343 /* logic-test */,
