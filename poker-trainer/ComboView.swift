@@ -122,7 +122,7 @@ struct ComboView: View {
                         isMissed: missedHands.contains(hand.id),
                         hasAnswered: hasAnswered,
                         isCorrectHand: correctHands.contains(hand.id),
-                        isInRange: game.isHandInRange(PokerLogic.generateAllPossibleCombos(for: hand, usedCards:[])[0])
+                        isInRange: game.isHandInRange(hand.dummyCards)
                     )
                     .onTapGesture {
                         if !hasAnswered {

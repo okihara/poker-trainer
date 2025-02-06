@@ -5,6 +5,22 @@ struct Hand: Identifiable {
     let id = UUID()
     let name: String
     let type: HandType
+
+    var dummyCards: [Card] {
+        let rankChars = Array(name.prefix(2))
+        guard rankChars.count == 2,
+              let firstRank = Rank(String(rankChars[0])),
+              let secondRank = Rank(String(rankChars[1])) else {
+            return []
+        }
+        if type == .pair {
+            return [Card(rank: firstRank, suit: .spades), Card(rank: secondRank, suit: .hearts)]
+        } else if type == .suited {
+            return [Card(rank: firstRank, suit: .spades), Card(rank: secondRank, suit: .spades)]
+        } else {
+            return [Card(rank: firstRank, suit: .spades), Card(rank: secondRank, suit: .hearts)]
+        }
+    }
 }
 
 enum HandType {
