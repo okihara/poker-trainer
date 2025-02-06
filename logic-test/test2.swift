@@ -166,4 +166,44 @@ final class test2: XCTestCase {
         XCTAssertEqual(result.ranks[3], .five, "フラッシュの4番目に高いカードは5になるはずです")
         XCTAssertEqual(result.ranks[4], .two, "フラッシュの5番目に高いカードは2になるはずです")
     }
+
+    func testNotFullHouse() throws {
+        let hand = [
+            Card(rank: .nine, suit: .hearts),
+            Card(rank: .queen, suit: .hearts)
+        ]
+        let board = [
+            Card(rank: .jack, suit: .spades),
+            Card(rank: .five, suit: .spades),
+            Card(rank: .ace, suit: .diamonds),
+            Card(rank: .jack, suit: .spades),
+            Card(rank: .jack, suit: .hearts)
+        ]
+        
+        let result = PokerHandEvaluator().evaluateHand(cards: hand + board)
+        XCTAssertNotEqual(result.rankType, .fullHouse, "9♥Q♥ + J♠5♠A♦J♠J♥ はフルハウスにはならないはずです")
+        XCTAssertEqual(result.rankType, .threeOfAKind, "スリーカード（J）になるはずです")
+        XCTAssertEqual(result.ranks[0], .jack, "スリーカードはジャックになるはずです")
+        XCTAssertEqual(result.ranks[1], .ace, "キッカー1はエースになるはずです")
+        XCTAssertEqual(result.ranks[2], .queen, "キッカー2はクイーンになるはずです")
+    }
+
+    func testFullHouse3() throws {
+        let hand = [
+            Card(rank: .five, suit: .hearts),
+            Card(rank: .four, suit: .hearts)
+        ]
+        let board = [
+            Card(rank: .jack, suit: .clubs),
+            Card(rank: .five, suit: .spades),
+            Card(rank: .ace, suit: .diamonds),
+            Card(rank: .jack, suit: .spades),
+            Card(rank: .jack, suit: .hearts)
+        ]
+        
+        let result = PokerHandEvaluator().evaluateHand(cards: hand + board)
+        XCTAssertEqual(result.rankType, .fullHouse)
+        XCTAssertEqual(result.ranks[0], .jack)
+        XCTAssertEqual(result.ranks[1], .five)
+    }
 }
