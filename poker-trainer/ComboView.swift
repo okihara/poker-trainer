@@ -190,10 +190,25 @@ struct ComboView: View {
         // 選択したハンドと正解のハンドが完全に一致するか確認
         isCorrect = selectedHandsSet == correctHandsNameSet
 
+        // 正解のコンボ数を計算
+        let correctComboCount = correctHandArray.reduce(0) { count, hand in
+            let possibleCombos = PokerLogic.generateAllPossibleCombos(for: hand, usedCards: usedCards)
+            return count + possibleCombos.filter { combo in
+                let rank = game.evaluator.evaluateHand(cards: combo + game.board)
+                return mode == .losing ? rank > myBestHandRank : rank < myBestHandRank
+            }.count
+        }
+
+        // レンジ内の全てのコンボ数を計算
+        let totalComboCount = rangeHands.reduce(0) { count, hand in
+            let possibleCombos = PokerLogic.generateAllPossibleCombos(for: hand, usedCards: usedCards)
+            return count + possibleCombos.count
+        }
+
         // 結果メッセージを設定
         resultMessage = isCorrect ? 
-            "選択: \(selectedHands.count)ハンド / 正解: \(correctHandArray.count)ハンド" :
-            "選択: \(selectedHands.count)ハンド / 正解: \(correctHandArray.count)ハンド"
+            "選択: \(selectedHands.count)ハンド / 正解: \(correctHandArray.count)ハンド(\(correctComboCount)/\(totalComboCount)コンボ)" :
+            "選択: \(selectedHands.count)ハンド / 正解: \(correctHandArray.count)ハンド(\(correctComboCount)/\(totalComboCount)コンボ)"
         
         // 回答済みフラグを設定
         hasAnswered = true
