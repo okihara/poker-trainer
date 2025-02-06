@@ -35,7 +35,7 @@ class PokerLogic {
     
     static func generateAllPossibleCombos(for hand: Hand, usedCards: Set<Card>) -> [[Card]] {
         let name = hand.name
-        let isSuited = name.hasSuffix("s")
+        let isSuited = hand.type == .suited
         let isPair = hand.type == .pair
         
         // カードのランクを取得

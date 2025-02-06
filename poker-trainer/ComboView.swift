@@ -121,7 +121,8 @@ struct ComboView: View {
                         isSelected: selectedHands.contains(where: { $0.id == hand.id }),
                         isMissed: missedHands.contains(hand.id),
                         hasAnswered: hasAnswered,
-                        isCorrectHand: correctHands.contains(hand.id)
+                        isCorrectHand: correctHands.contains(hand.id),
+                        isInRange: game.isHandInRange(PokerLogic.generateAllPossibleCombos(for: hand, usedCards:[])[0])
                     )
                     .onTapGesture {
                         if !hasAnswered {
@@ -156,7 +157,7 @@ struct ComboView: View {
             let possibleCombos = PokerLogic.generateAllPossibleCombos(for: hand, usedCards: usedCards)
             // 実現可能な組み合わせがあり、かつレンジ内に含まれる場合
             if !possibleCombos.isEmpty && possibleCombos.contains(where: { combo in
-                game.isHandInRange(combo[0], combo[1])
+                game.isHandInRange(combo)
             }) {
                 print("hand: \(hand.name)")
                 print("possibleCombos: \(possibleCombos.map { "\($0[0].str)\($0[1].str)" })")
@@ -253,6 +254,7 @@ struct HandCell: View {
     let isMissed: Bool
     let hasAnswered: Bool
     let isCorrectHand: Bool
+    let isInRange: Bool
     
     var backgroundColor: Color {
         if hasAnswered {
@@ -262,6 +264,8 @@ struct HandCell: View {
                 return .blue      // 不正解のハンドを選択
             } else if isMissed {
                 return .red       // 選択されなかった正解
+            } else if !isInRange {
+                return Color.gray.opacity(0.2) // レンジ外のハンド
             }
         } else if isSelected {
             return .blue      // 未回答時の選択状態
