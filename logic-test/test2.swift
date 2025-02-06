@@ -103,4 +103,45 @@ final class test2: XCTestCase {
         XCTAssertEqual(result.rankType, .straight)
         XCTAssertEqual(result.ranks[0], .ten)
     }
+
+    func testTwoPair2() throws {
+        let hand = [
+            Card(rank: .ace, suit: .clubs),
+            Card(rank: .three, suit: .clubs)
+        ]
+        let board = [
+            Card(rank: .six, suit: .hearts),
+            Card(rank: .nine, suit: .clubs),
+            Card(rank: .six, suit: .spades),
+            Card(rank: .two, suit: .diamonds),
+            Card(rank: .ace, suit: .spades)
+        ]
+        
+        let result = PokerHandEvaluator().evaluateHand(cards: hand + board)
+        XCTAssertEqual(result.rankType, .twoPair, "エースペアと6のペアでツーペアになるはずです")
+        XCTAssertEqual(result.ranks[0], .ace, "ツーペアの高い方はエースになるはずです")
+        XCTAssertEqual(result.ranks[1], .six, "ツーペアの低い方は6になるはずです")
+        XCTAssertEqual(result.ranks[2], .nine, "キッカーは9になるはずです")
+    }
+
+    // ６のペアで２が消されるパターン
+    func testTwoPair3() throws {
+        let hand = [
+            Card(rank: .ace, suit: .hearts),
+            Card(rank: .two, suit: .hearts)
+        ]
+        let board = [
+            Card(rank: .six, suit: .hearts),
+            Card(rank: .nine, suit: .clubs),
+            Card(rank: .six, suit: .spades),
+            Card(rank: .two, suit: .diamonds),
+            Card(rank: .ace, suit: .spades)
+        ]
+        
+        let result = PokerHandEvaluator().evaluateHand(cards: hand + board)
+        XCTAssertEqual(result.rankType, .twoPair, "エースペアと6のペアでツーペアになるはずです")
+        XCTAssertEqual(result.ranks[0], .ace, "ツーペアの高い方はエースになるはずです")
+        XCTAssertEqual(result.ranks[1], .six, "ツーペアの低い方は6になるはずです")
+        XCTAssertEqual(result.ranks[2], .nine, "キッカーは9になるはずです")
+    }
 }
