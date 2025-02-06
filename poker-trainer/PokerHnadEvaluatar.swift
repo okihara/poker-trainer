@@ -174,7 +174,9 @@ class PokerHandEvaluator {
         } else if let fullHouseRanks = checkFullHouse(cards: sortedCards) {
             return HandRank(rankType: .fullHouse, ranks: fullHouseRanks)
         } else if isFlush {
-            return HandRank(rankType: .flush, ranks: Array(sortedCards.map { $0.rank }.prefix(5)))
+            let suitGroups = Dictionary(grouping: sortedCards, by: { $0.suit })
+            let flushCards = suitGroups.values.first(where: { $0.count >= 5 })!
+            return HandRank(rankType: .flush, ranks: Array(flushCards.map { $0.rank }.prefix(5)))
         } else if isStraight {
             return HandRank(rankType: .straight, ranks: Array(sortedCards.map { $0.rank }.prefix(5)))
         } else if let threeOfAKindRanks = checkThreeOfAKind(cards: sortedCards) {

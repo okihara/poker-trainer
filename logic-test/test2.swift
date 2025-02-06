@@ -144,4 +144,26 @@ final class test2: XCTestCase {
         XCTAssertEqual(result.ranks[1], .six, "ツーペアの低い方は6になるはずです")
         XCTAssertEqual(result.ranks[2], .nine, "キッカーは9になるはずです")
     }
+
+    func testFlush() throws {
+        let hand = [
+            Card(rank: .ace, suit: .hearts),
+            Card(rank: .two, suit: .hearts)
+        ]
+        let board = [
+            Card(rank: .queen, suit: .hearts),
+            Card(rank: .five, suit: .hearts),
+            Card(rank: .jack, suit: .hearts),
+            Card(rank: .jack, suit: .spades),
+            Card(rank: .king, suit: .spades)
+        ]
+        
+        let result = PokerHandEvaluator().evaluateHand(cards: hand + board)
+        XCTAssertEqual(result.rankType, .flush, "ハートのA,2,Q,5,Jでフラッシュになるはずです")
+        XCTAssertEqual(result.ranks[0], .ace, "フラッシュの最高位カードはエースになるはずです")
+        XCTAssertEqual(result.ranks[1], .queen, "フラッシュの2番目に高いカードはクイーンになるはずです")
+        XCTAssertEqual(result.ranks[2], .jack, "フラッシュの3番目に高いカードはジャックになるはずです")
+        XCTAssertEqual(result.ranks[3], .five, "フラッシュの4番目に高いカードは5になるはずです")
+        XCTAssertEqual(result.ranks[4], .two, "フラッシュの5番目に高いカードは2になるはずです")
+    }
 }
