@@ -114,7 +114,7 @@ struct ComboView: View {
             }
 
             // グリッド表示
-            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 4), count: 13), spacing: 4) {
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 0), count: 13), spacing: 1) {
                 ForEach(handGrid.flatMap { $0 }) { hand in
                     HandCell(
                         hand: hand,
@@ -136,7 +136,7 @@ struct ComboView: View {
         .onAppear {
             if !isInitialized {
                 isInitialized = true
-                game.startFromRiver()
+                game.startRandomBoard()
             }
         }
     }
@@ -207,9 +207,7 @@ struct ComboView: View {
         }
 
         // 結果メッセージを設定
-        resultMessage = isCorrect ? 
-            "選択: \(selectedHands.count)ハンド / 正解: \(correctHandArray.count)ハンド(\(correctComboCount)/\(totalComboCount)コンボ)" :
-            "選択: \(selectedHands.count)ハンド / 正解: \(correctHandArray.count)ハンド(\(correctComboCount)/\(totalComboCount)コンボ)"
+        resultMessage = "\(selectedHands.count)/\(correctHandArray.count)ハンド(\(correctComboCount)/\(totalComboCount)コンボ)"
         
         // 回答済みフラグを設定
         hasAnswered = true
@@ -279,6 +277,6 @@ struct HandCell: View {
             .frame(width: 30, height: 30)
             .background(backgroundColor)
             .foregroundColor(.white)
-            .cornerRadius(4)
+            .cornerRadius(0)
     }
 }

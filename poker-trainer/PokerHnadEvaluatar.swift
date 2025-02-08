@@ -52,6 +52,23 @@ enum Rank: Int, Comparable {
             return nil
         }
     }
+
+    var shortString: String {
+        switch self {
+        case .ace:
+            return "A"
+        case .king:
+            return "K"
+        case .queen:
+            return "Q"
+        case .jack:
+            return "J"
+        case .ten:
+            return "T"
+        default:
+            return String(rawValue)
+        }
+    }
 }
 
 struct Card: Comparable, Hashable {
@@ -121,7 +138,7 @@ struct Card: Comparable, Hashable {
         }
         
         return "\(rankStr)\(suitStr)"
-    }
+    }    
 }
 
 struct HandRank: Comparable {
