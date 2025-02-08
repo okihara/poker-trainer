@@ -163,12 +163,14 @@ class PokerHandEvaluator {
 
         let sortedCards = cards.sorted(by: >)
         let isFlush = checkFlush(cards: sortedCards)
-        let isStraight = checkStraight(cards: sortedCards)
+        let straightHighCard = checkStraight(cards: sortedCards)
 
-        if isFlush && isStraight && sortedCards.last?.rank == .ace {
-            return HandRank(rankType: .royalFlush, ranks: sortedCards.map { $0.rank })
-        } else if isFlush && isStraight {
-            return HandRank(rankType: .straightFlush, ranks: sortedCards.map { $0.rank })
+        if isFlush && straightHighCard != nil {
+            if straightHighCard == 14 {
+                return HandRank(rankType: .royalFlush, ranks: sortedCards.map { $0.rank })
+            } else {
+                return HandRank(rankType: .straightFlush, ranks: sortedCards.map { $0.rank })
+            }
         } else if let fourOfAKindRanks = checkFourOfAKind(cards: sortedCards) {
             return HandRank(rankType: .fourOfAKind, ranks: fourOfAKindRanks)
         } else if let fullHouseRanks = checkFullHouse(cards: sortedCards) {
@@ -177,8 +179,17 @@ class PokerHandEvaluator {
             let suitGroups = Dictionary(grouping: sortedCards, by: { $0.suit })
             let flushCards = suitGroups.values.first(where: { $0.count >= 5 })!
             return HandRank(rankType: .flush, ranks: Array(flushCards.map { $0.rank }.prefix(5)))
-        } else if isStraight {
-            return HandRank(rankType: .straight, ranks: Array(sortedCards.map { $0.rank }.prefix(5)))
+        } else if let highCard = straightHighCard {
+            // ストレートの場合、最高カードから順に5枚のランクを生成
+            let straightRanks: [Rank]
+            if highCard == 5 { // A2345の場合
+                straightRanks = [.five, .four, .three, .two, .ace]
+            } else {
+                straightRanks = (0..<5).map { offset in
+                    Rank(rawValue: highCard - offset)!
+                }
+            }
+            return HandRank(rankType: .straight, ranks: straightRanks)
         } else if let threeOfAKindRanks = checkThreeOfAKind(cards: sortedCards) {
             return HandRank(rankType: .threeOfAKind, ranks: threeOfAKindRanks)
         } else if let twoPairRanks = checkTwoPair(cards: sortedCards) {
@@ -276,10 +287,10 @@ class PokerHandEvaluator {
         return suitCounts.values.contains(where: { $0 >= 5 })
     }
 
-    private func checkStraight(cards: [Card]) -> Bool {
+    private func checkStraight(cards: [Card]) -> Int? {
         let sortedRanks = Array(Set(cards.map { $0.rank.rawValue })).sorted(by: >)
         if sortedRanks.count < 5 {
-            return false
+            return nil
         }
 
         // エースを1としても扱えるように、エースの場合は1のケースも追加
@@ -290,13 +301,19 @@ class PokerHandEvaluator {
         
         // 連続した5枚のカードがあるかチェック
         for i in 0..<(ranks.count - 4) {
-            let straight = ranks[i..<(i + 5)].enumerated()
-            if straight.allSatisfy({ ranks[i] - $0.offset == $0.element }) {
-                return true
+            let straightRanks = ranks[i..<(i + 5)]
+            let isConsecutive = straightRanks.enumerated().allSatisfy({ ranks[i] - $0.offset == $0.element })
+            
+            if isConsecutive {
+                // A2345のストレートの場合は、最高ランクを5として扱う
+                if straightRanks.contains(1) && straightRanks.max() == 5 {
+                    return 5
+                }
+                return ranks[i] // ストレートの最高カードを返す
             }
         }
         
-        return false
+        return nil
     }
 
    private func checkFourOfAKind(cards: [Card]) -> [Rank]? {
