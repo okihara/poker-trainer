@@ -55,12 +55,26 @@ class PokerGame: ObservableObject {
         // ボードのカード枚数をランダムに決定（3-5枚）
         let boardCount = Int.random(in: 3...5)
         
-        // ボードカードを選択
-        board = (0..<boardCount).map { _ in deck.remove(at: Int.random(in: 0..<deck.count)) }
+        // ボードカードを上から選択
+        board = Array(deck.prefix(boardCount))
+        deck.removeFirst(boardCount)
         
-        // プレイヤーの手札を選択
-        hand = [deck.remove(at: Int.random(in: 0..<deck.count)), 
-                deck.remove(at: Int.random(in: 0..<deck.count))]
+        // レンジに合う手札が見つかるまで探す
+        var validHand: [Card] = []
+        while validHand.isEmpty {
+            let card1Index = Int.random(in: 0..<deck.count)
+            let card1 = deck[card1Index]
+            let card2Index = Int.random(in: 0..<deck.count)
+            let card2 = deck[card2Index]
+            
+            if card1Index != card2Index && isHandInRange([card1, card2]) {
+                validHand = [card1, card2]
+                deck.remove(at: max(card1Index, card2Index))
+                deck.remove(at: min(card1Index, card2Index))
+            }
+        }
+        
+        hand = validHand
     }
     
     // プリフロップレンジを定義
