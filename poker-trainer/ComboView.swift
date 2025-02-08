@@ -27,7 +27,7 @@ struct ComboView: View {
     }
 
     var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             HStack {
                 ForEach(game.board, id: \.self) { card in
                     Image(card.imageName)
@@ -35,7 +35,7 @@ struct ComboView: View {
                         .frame(width: 40, height: 60)
                         .shadow(radius: 4)
                 }
-            }.padding(.top, 20)
+            }.padding(.top, 32)
             
             HStack {
                 ForEach(game.hand, id: \.self) { card in
@@ -45,73 +45,64 @@ struct ComboView: View {
                         .shadow(radius: 4)
                 }
             }
-            .padding()
+            .padding(.vertical, 16)
 
+            
             // 結果メッセージの表示
             if !resultMessage.isEmpty {
-                VStack {
+                VStack(spacing: 8) {
                     Image(systemName: isCorrect ? "checkmark.circle.fill" : "xmark.circle.fill")
                         .font(.system(size: 60))
                         .foregroundColor(isCorrect ? .green : .red)
                         .scaleEffect(showResultAnimation ? 1.0 : 0.1)
                         .animation(.spring(response: 0.3, dampingFraction: 0.5), value: showResultAnimation)
-                    
-                    Text(resultMessage)
-                        .font(.headline)
-                        .foregroundColor(isCorrect ? .green : .red)
-                        .padding()
-                        .opacity(showResultAnimation ? 1.0 : 0.0)
-                        .animation(.easeIn(duration: 0.2).delay(0.3), value: showResultAnimation)
+                        Text(resultMessage)
+                            .font(.headline)
+                            .foregroundColor(isCorrect ? .green : .red)
+                            .padding(.bottom, 8)
+                            .opacity(showResultAnimation ? 1.0 : 0.0)
+                            .animation(.easeIn(duration: 0.2).delay(0.3), value: showResultAnimation)
                 }
+                .padding(.vertical, 8)
             }
             
+            Spacer() // Push all content to the top
+            
             // モード切り替えボタンと回答/次へボタン
-            HStack {
-                Button(action: {
-                    mode = .winning
-                }) {
-                    Text("勝ってるコンボ")
-                        .padding()
-                        .background(mode == .winning ? Color.green : Color.gray)
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
-                }
-                .disabled(hasAnswered) // 回答後は無効化
+            HStack(spacing: 12) {
 
-                Button(action: {
-                    mode = .losing
-                }) {
-                    Text("負けてるコンボ")
-                        .padding()
-                        .background(mode == .losing ? Color.red : Color.gray)
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
-                }
-                .disabled(hasAnswered) // 回答後は無効化
-
+                
+                Spacer() // Push buttons to the right
+                
                 if !hasAnswered {
                     Button(action: {
                         checkAnswer()
                         hasAnswered = true // 回答済みにする
                     }) {
                         Text("回答")
-                            .padding()
+                            .font(.system(size: 16, weight: .bold))
+                            .padding(.horizontal, 32)
+                            .padding(.vertical, 10)
                             .background(Color.blue)
                             .foregroundColor(.white)
-                            .cornerRadius(8)
+                            .cornerRadius(12)
                     }
                 } else {
                     Button(action: {
                         nextProblem()
                     }) {
                         Text("次へ")
-                            .padding()
+                            .font(.system(size: 16, weight: .bold))
+                            .padding(.horizontal, 32)
+                            .padding(.vertical, 10)
                             .background(Color.blue)
                             .foregroundColor(.white)
-                            .cornerRadius(8)
+                            .cornerRadius(12)
                     }
                 }
             }
+            .padding(.horizontal, 16)
+            .padding(.bottom, 16)
 
             // グリッド表示
             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 0), count: 13), spacing: 1) {
@@ -131,7 +122,9 @@ struct ComboView: View {
                     }
                 }
             }
-            .padding(.top, 5)
+            .padding(.horizontal, 0)
+            .padding(.bottom, 16)
+
         }
         .onAppear {
             if !isInitialized {
