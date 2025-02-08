@@ -242,7 +242,7 @@ struct ComboView: View {
             resultMessage = ""
             hasAnswered = false
             isCorrect = false
-            game.startFromRiver()
+            game.startRandomBoard()
         }
     }
 }

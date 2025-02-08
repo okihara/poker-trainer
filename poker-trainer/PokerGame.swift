@@ -48,6 +48,21 @@ class PokerGame: ObservableObject {
         feedback = ""
     }
     
+    func startRandomBoard() {
+        // デッキをリセット
+        var deck = createDeck()
+        
+        // ボードのカード枚数をランダムに決定（3-5枚）
+        let boardCount = Int.random(in: 3...5)
+        
+        // ボードカードを選択
+        board = (0..<boardCount).map { _ in deck.remove(at: Int.random(in: 0..<deck.count)) }
+        
+        // プレイヤーの手札を選択
+        hand = [deck.remove(at: Int.random(in: 0..<deck.count)), 
+                deck.remove(at: Int.random(in: 0..<deck.count))]
+    }
+    
     // プリフロップレンジを定義
     func isHandInRange(_ cards: [Card]) -> Bool {
         guard cards.count == 2 else { return false }
