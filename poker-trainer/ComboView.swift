@@ -19,6 +19,7 @@ struct ComboView: View {
     @State private var showResultAnimation: Bool = false
     @State private var missedHands: Set<UUID> = []
     @State private var correctHands: Set<UUID> = []
+    @State private var isPocketPairsSelected: Bool = false
 
     private let handGrid = PokerLogic.generateHandGrid()
 
@@ -70,7 +71,16 @@ struct ComboView: View {
             
             // モード切り替えボタンと回答/次へボタン
             HStack(spacing: 12) {
-
+                Button(action: selectAllPocketPairs) {
+                    Text(isPocketPairsSelected ? "ポケットペア解除" : "ポケットペア全選択")
+                        .font(.system(size: 16, weight: .bold))
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 10)
+                        .background(hasAnswered ? Color.gray : Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(12)
+                }
+                .disabled(hasAnswered)  // 回答済みの場合は無効化
                 
                 Spacer() // Push buttons to the right
                 
@@ -211,6 +221,28 @@ struct ComboView: View {
         }
     }
 
+    // ポケットペアを全て選択/解除する関数
+    private func selectAllPocketPairs() {
+        let allHands = handGrid.flatMap { $0 }
+        if isPocketPairsSelected {
+            // すでに選択されている場合は解除
+            selectedHands = selectedHands.filter { hand in
+                hand.type != .pair
+            }
+            isPocketPairsSelected = false
+        } else {
+            // 選択されていない場合は追加
+            let pocketPairs = allHands.filter { hand in
+                hand.type == .pair
+            }
+            // 既存の選択に.pair以外のものを保持しつつ、新しいポケットペアを追加
+            selectedHands = selectedHands.filter { hand in
+                hand.type != .pair
+            } + pocketPairs
+            isPocketPairsSelected = true
+        }
+    }
+
     // ハンド選択/解除の切り替え
     private func toggleHandSelection(_ hand: Hand) {
         if let index = selectedHands.firstIndex(where: { $0.id == hand.id }) {
@@ -222,19 +254,18 @@ struct ComboView: View {
 
     // 次の問題へ進むメソッド
     private func nextProblem() {
-        withAnimation {
-            showResultAnimation = false
-        }
+        // 状態をリセット
+        selectedHands = []
+        hasAnswered = false
+        resultMessage = ""
+        isCorrect = false
+        showResultAnimation = false
+        missedHands = []
+        correctHands = []
+        isPocketPairsSelected = false  // トグル状態をリセット
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            selectedHands = []
-            missedHands = []
-            correctHands = []
-            resultMessage = ""
-            hasAnswered = false
-            isCorrect = false
-            game.startRandomBoard()
-        }
+        // 新しい問題を開始
+        game.startRandomBoard()
     }
 }
 
