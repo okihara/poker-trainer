@@ -74,18 +74,30 @@ class PokerGame: ObservableObject {
     let bbRange = HandRange(
         name: "BB Range",
         hands: Set([
+            // ペア
             "AA", "KK", "QQ", "JJ", "TT", "99", "88", "77", "66", "55", "44", "33", "22",
+            
+            // スーテッド
             "AKs", "AQs", "AJs", "ATs", "A9s", "A8s", "A7s", "A6s", "A5s", "A4s", "A3s", "A2s",
-            "KQs", "KJs", "KTs", "K9s", "K8s", "K7s", "K6s", "K5s",
-            "QJs", "QTs", "Q9s", "Q8s", "Q7s",
-            "JTs", "J9s", "J8s",
-            "T9s", "T8s",
-            "98s", "87s", "76s", "65s", "54s", "43s", "32s",
+            "KQs", "KJs", "KTs", "K9s", "K8s", "K7s", "K6s", "K5s", "K4s", "K3s", "K2s",
+            "QJs", "QTs", "Q9s", "Q8s", "Q7s", "Q6s", "Q5s", "Q4s", "Q3s", "Q2s",
+            "JTs", "J9s", "J8s", "J7s", "J6s", "J5s", "J4s", "J3s", "J2s",
+            "T9s", "T8s", "T7s", "T6s", "T5s", "T4s", "T3s", "T2s",
+            "98s", "97s", "96s", "95s", "94s", "93s", "92s",
+            "87s", "86s", "85s", "84s", "83s", "82s",
+            "76s", "75s", "74s", "73s", "72s",
+            "65s", "64s", "63s", "62s",
+            "54s", "53s", "52s",
+            "43s", "42s",
+            "32s",
+            
+            // オフスーツ
             "AKo", "AQo", "AJo", "ATo", "A9o", "A8o", "A7o", "A6o", "A5o", "A4o", "A3o", "A2o",
-            "KQo", "KJo", "KTo", "K9o",
-            "QJo", "QTo", "Q9o",
-            "JTo", "J9o",
-            "T9o"
+            "KQo", "KJo", "KTo", "K9o", "K8o",
+            "QJo", "QTo", "Q9o", "Q8o",
+            "JTo", "J9o", "J8o",
+            "T9o", "T8o",
+            "98o", "87o", "76o", "65o", "54o"
         ])
     )
 
