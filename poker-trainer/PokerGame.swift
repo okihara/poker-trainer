@@ -28,49 +28,138 @@ class PokerGame: ObservableObject {
     @Published var board: [Card] = []
     @Published var outs: Int = 0
     @Published var feedback: String = ""
-    @Published var isLoading: Bool = false // ローディング状態を管理
+    @Published var isLoading: Bool = false
     @Published var options: [Int] = []
     @Published var evaluator: PokerHandEvaluator = PokerHandEvaluator()
     @Published var selectedRange: HandRange? // 現在選択されているレンジ
-    
+    @Published var opponentRange: HandRange? // 相手のレンジ
+
     let suits: [Suit] = [.hearts, .spades, .diamonds, .clubs]
     let ranks: [Rank] = [.two, .three, .four, .five, .six, .seven, .eight, .nine, .ten, .jack, .queen, .king, .ace]
-    
-    // プリセットレンジの定義
-    let ranges: [HandRange] = [
 
-        HandRange(name: "BTN vs BB", hands: Set([
-            "AA", "KK", "QQ", "JJ", "TT", "99", "88", "77", "66", "55", "44", "33", "22",
+    // 各ポジションのレンジ定義
+    let utgRange = HandRange(
+        name: "UTG Range",
+        hands: Set([
+            "AA", "KK", "QQ", "JJ", "TT", "99", "88", "77", "66", "55", "44", "33",
             "AKs", "AQs", "AJs", "ATs", "A9s", "A8s", "A7s", "A6s", "A5s", "A4s", "A3s",
             "KQs", "KJs", "KTs", "K9s", "K8s",
             "QJs", "QTs", "Q9s",
             "JTs", "J9s",
-            "T9s", "T8s",
-            "98s",
+            "T9s",
+            "98s", "78s",
             "AKo", "AQo", "AJo", "ATo",
             "KQo", "KJo",
             "QJo",
-        ])),
-        HandRange(name: "UTG", hands: Set([
-            "AA", "KK", "QQ", "JJ", "TT", "99", "88",
-            "AKs", "AQs", "AJs", "ATs", "KQs", "KJs", "QJs",
-            "AKo", "AQo", "KQo"
-        ])),
-        HandRange(name: "MP", hands: Set([
-            "AA", "KK", "QQ", "JJ", "TT", "99", "88", "77",
-            "AKs", "AQs", "AJs", "ATs", "A9s", "KQs", "KJs", "KTs",
-            "QJs", "QTs", "JTs",
-            "AKo", "AQo", "AJo", "KQo"
-        ])),
-        HandRange(name: "BTN", hands: Set([
-            "AA", "KK", "QQ", "JJ", "TT", "99", "88", "77", "66", "55",
+        ])
+    )
+
+    let btnRange = HandRange(
+        name: "BTN Range",
+        hands: Set([
+            "AA", "KK", "QQ", "JJ", "TT", "99", "88", "77", "66", "55", "44", "33", "22",
             "AKs", "AQs", "AJs", "ATs", "A9s", "A8s", "A7s", "A6s", "A5s", "A4s", "A3s", "A2s",
-            "KQs", "KJs", "KTs", "K9s", "QJs", "QTs", "Q9s", "JTs", "J9s", "T9s", "98s", "87s", "76s",
-            "AKo", "AQo", "AJo", "ATo", "A9o", "KQo", "KJo", "QJo"
-        ])),
-    ]
+            "KQs", "KJs", "KTs", "K9s", "K8s", "K7s", "K6s", "K5s",
+            "QJs", "QTs", "Q9s", "Q8s", "Q7s",
+            "JTs", "J9s", "J8s",
+            "T9s", "T8s",
+            "98s", "87s", "76s", "65s", "54s", "43s", "32s",
+            "AKo", "AQo", "AJo", "ATo", "A9o", "A8o",
+            "KQo", "KJo", "KTo",
+            "QJo", "QTo",
+            "JTo"
+        ])
+    )
+
+    let bbRange = HandRange(
+        name: "BB Range",
+        hands: Set([
+            "AA", "KK", "QQ", "JJ", "TT", "99", "88", "77", "66", "55", "44", "33", "22",
+            "AKs", "AQs", "AJs", "ATs", "A9s", "A8s", "A7s", "A6s", "A5s", "A4s", "A3s", "A2s",
+            "KQs", "KJs", "KTs", "K9s", "K8s", "K7s", "K6s", "K5s",
+            "QJs", "QTs", "Q9s", "Q8s", "Q7s",
+            "JTs", "J9s", "J8s",
+            "T9s", "T8s",
+            "98s", "87s", "76s", "65s", "54s", "43s", "32s",
+            "AKo", "AQo", "AJo", "ATo", "A9o", "A8o", "A7o", "A6o", "A5o", "A4o", "A3o", "A2o",
+            "KQo", "KJo", "KTo", "K9o",
+            "QJo", "QTo", "Q9o",
+            "JTo", "J9o",
+            "T9o"
+        ])
+    )
+
+    // ランダムなボードを生成
+    func startRandomBoard(position: ComboView.Position) {
+        // 既存のカードをクリア
+        hand.removeAll()
+        board.removeAll()
+        
+        // ポジションに応じたレンジを設定
+        switch position {
+        case .utgVsBtn:
+            opponentRange = utgRange  // UTGのレンジからランダムなハンドを生成
+            selectedRange = btnRange  // BTNのレンジから選択する
+        case .utgVsBb:
+            opponentRange = utgRange  // UTGのレンジからランダムなハンドを生成
+            selectedRange = bbRange   // BBのレンジから選択する
+        case .btnVsBb:
+            opponentRange = btnRange  // BTNのレンジからランダムなハンドを生成
+            selectedRange = bbRange   // BBのレンジから選択する
+        }
+
+        // ランダムなハンドを生成（相手のレンジから）
+        var deck = createDeck()
+        var validHand: [Card] = []
+        var attempts = 0
+        let maxAttempts = 100 // 無限ループを防ぐ
+
+        while validHand.isEmpty && attempts < maxAttempts {
+            attempts += 1
+            if let possibleHand = generateRandomHand(from: deck) {
+                if opponentRange?.contains(possibleHand) == true {
+                    validHand = possibleHand
+                }
+            }
+        }
+
+        if !validHand.isEmpty {
+            hand = validHand
+            // 使用したカードをデッキから削除
+            deck.removeAll { card in validHand.contains(card) }
+        } else {
+            // 有効な手札が見つからない場合はデフォルトの動作
+            hand = Array(deck.prefix(2))
+            deck.removeFirst(2)
+        }
+        
+        // ボードカードを生成
+        for _ in 0..<5 {
+            if let card = deck.randomElement() {
+                board.append(card)
+                deck.removeAll { $0 == card }
+            }
+        }
+    }
+
+    // ランダムな手札を生成するヘルパー関数
+    private func generateRandomHand(from deck: [Card]) -> [Card]? {
+        var tempDeck = deck
+        var randomHand: [Card] = []
+        
+        for _ in 0..<2 {
+            guard let card = tempDeck.randomElement() else { return nil }
+            randomHand.append(card)
+            tempDeck.removeAll { $0 == card }
+        }
+        
+        return randomHand
+    }
     
     func startGame() {
+        // デフォルトのレンジを設定
+        selectedRange = btnRange
+
         var deck = createDeck()
         hand = Array(deck.prefix(2)) // 最初の2枚を手札
         deck.removeFirst(2)
@@ -92,37 +181,6 @@ class PokerGame: ObservableObject {
             } else {
                 options.append(outs + (i - randomIndex))
             }
-        }
-    }
-    
-    func startRandomBoard() {
-        var deck = createDeck()
-        let boardCount = Int.random(in: 3...5)
-        board = Array(deck.prefix(boardCount))
-        deck.removeFirst(boardCount)
-        
-        // 選択されているレンジがない場合はデフォルトのレンジを使用
-        let currentRange = selectedRange ?? ranges[0]
-        
-        var validHand: [Card] = []
-        var attempts = 0
-        let maxAttempts = 100 // 無限ループを防ぐ
-        
-        while validHand.isEmpty && attempts < maxAttempts {
-            attempts += 1
-            let shuffledDeck = deck.shuffled()
-            let possibleHand = Array(shuffledDeck.prefix(2))
-            
-            if currentRange.contains(possibleHand) {
-                validHand = possibleHand
-            }
-        }
-        
-        if validHand.isEmpty {
-            // 有効な手札が見つからない場合はデフォルトの動作
-            hand = Array(deck.prefix(2))
-        } else {
-            hand = validHand
         }
     }
     
@@ -160,7 +218,7 @@ class PokerGame: ObservableObject {
     
     // プリフロップレンジを定義
     func isHandInRange(_ cards: [Card]) -> Bool {
-        return ranges[0].contains(cards)
+        return selectedRange?.contains(cards) ?? false
     }
     
     func isHandInRange____(_ cards: [Card]) -> Bool {

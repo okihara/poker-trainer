@@ -20,6 +20,7 @@ struct ComboView: View {
     @State private var missedHands: Set<UUID> = []
     @State private var correctHands: Set<UUID> = []
     @State private var isPocketPairsSelected: Bool = false
+    @State private var selectedPosition: Position = .utgVsBtn
 
     private let handGrid = PokerLogic.generateHandGrid()
 
@@ -27,8 +28,25 @@ struct ComboView: View {
         case winning, losing
     }
 
+    enum Position: String, CaseIterable {
+        case utgVsBtn = "UTG vs BTN"
+        case utgVsBb = "UTG vs BB"
+        case btnVsBb = "BTN vs BB"
+    }
+
     var body: some View {
         VStack(spacing: 0) {
+            HStack {
+                Picker("Position", selection: $selectedPosition) {
+                    ForEach(Position.allCases, id: \.self) { position in
+                        Text(position.rawValue).tag(position)
+                    }
+                }
+                .pickerStyle(.menu)
+                .padding(.horizontal)
+            }
+            .padding(.top, 16)
+            
             HStack {
                 ForEach(game.board, id: \.self) { card in
                     Image(card.imageName)
@@ -36,7 +54,7 @@ struct ComboView: View {
                         .frame(width: 40, height: 60)
                         .shadow(radius: 4)
                 }
-            }.padding(.top, 32)
+            }.padding(.top, 16)
             
             HStack {
                 ForEach(game.hand, id: \.self) { card in
@@ -51,18 +69,18 @@ struct ComboView: View {
             
             // 結果メッセージの表示
             if !resultMessage.isEmpty {
-                VStack(spacing: 8) {
+                HStack(spacing: 8) {
                     Image(systemName: isCorrect ? "checkmark.circle.fill" : "xmark.circle.fill")
                         .font(.system(size: 60))
                         .foregroundColor(isCorrect ? .green : .red)
                         .scaleEffect(showResultAnimation ? 1.0 : 0.1)
                         .animation(.spring(response: 0.3, dampingFraction: 0.5), value: showResultAnimation)
-                        Text(resultMessage)
-                            .font(.headline)
-                            .foregroundColor(isCorrect ? .green : .red)
-                            .padding(.bottom, 8)
-                            .opacity(showResultAnimation ? 1.0 : 0.0)
-                            .animation(.easeIn(duration: 0.2).delay(0.3), value: showResultAnimation)
+                    Text(resultMessage)
+                        .font(.headline)
+                        .foregroundColor(isCorrect ? .green : .red)
+                        .padding(.bottom, 8)
+                        .opacity(showResultAnimation ? 1.0 : 0.0)
+                        .animation(.easeIn(duration: 0.2).delay(0.3), value: showResultAnimation)
                 }
                 .padding(.vertical, 8)
             }
@@ -139,7 +157,7 @@ struct ComboView: View {
         .onAppear {
             if !isInitialized {
                 isInitialized = true
-                game.startRandomBoard()
+                game.startRandomBoard(position: selectedPosition)
             }
         }
     }
@@ -265,7 +283,7 @@ struct ComboView: View {
         isPocketPairsSelected = false  // トグル状態をリセット
         
         // 新しい問題を開始
-        game.startRandomBoard()
+        game.startRandomBoard(position: selectedPosition)
     }
 }
 
