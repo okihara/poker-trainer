@@ -21,6 +21,7 @@ struct ComboView: View {
     @State private var correctHands: Set<UUID> = []
     @State private var isPocketPairsSelected: Bool = false
     @State private var selectedPosition: Position = .utgVsBtn
+    @State private var selectedBoardSize: BoardSize = .random
 
     private let handGrid = PokerLogic.generateHandGrid()
 
@@ -34,12 +35,36 @@ struct ComboView: View {
         case btnVsBb = "BTN vs BB"
     }
 
+    enum BoardSize: String, CaseIterable {
+        case three = "フロップ"
+        case four = "ターン"
+        case five = "リバー"
+        case random = "ランダム"
+
+        var cardCount: Int {
+            switch self {
+            case .three: return 3
+            case .four: return 4
+            case .five: return 5
+            case .random: return Int.random(in: 3...5)
+            }
+        }
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             HStack {
                 Picker("Position", selection: $selectedPosition) {
                     ForEach(Position.allCases, id: \.self) { position in
                         Text(position.rawValue).tag(position)
+                    }
+                }
+                .pickerStyle(.menu)
+                .padding(.horizontal)
+
+                Picker("Board Size", selection: $selectedBoardSize) {
+                    ForEach(BoardSize.allCases, id: \.self) { size in
+                        Text(size.rawValue).tag(size)
                     }
                 }
                 .pickerStyle(.menu)
@@ -157,7 +182,7 @@ struct ComboView: View {
         .onAppear {
             if !isInitialized {
                 isInitialized = true
-                game.startRandomBoard(position: selectedPosition)
+                game.startRandomBoard(position: selectedPosition, boardSize: selectedBoardSize)
             }
         }
     }
@@ -283,7 +308,7 @@ struct ComboView: View {
         isPocketPairsSelected = false  // トグル状態をリセット
         
         // 新しい問題を開始
-        game.startRandomBoard(position: selectedPosition)
+        game.startRandomBoard(position: selectedPosition, boardSize: selectedBoardSize)
     }
 }
 

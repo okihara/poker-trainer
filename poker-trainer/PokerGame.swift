@@ -90,7 +90,7 @@ class PokerGame: ObservableObject {
     )
 
     // ランダムなボードを生成
-    func startRandomBoard(position: ComboView.Position) {
+    func startRandomBoard(position: ComboView.Position, boardSize: ComboView.BoardSize) {
         // 既存のカードをクリア
         hand.removeAll()
         board.removeAll()
@@ -133,8 +133,9 @@ class PokerGame: ObservableObject {
             deck.removeFirst(2)
         }
         
-        // ボードカードを生成
-        for _ in 0..<5 {
+        // 指定された枚数のボードカードを生成
+        let boardCount = boardSize.cardCount
+        for _ in 0..<boardCount {
             if let card = deck.randomElement() {
                 board.append(card)
                 deck.removeAll { $0 == card }
