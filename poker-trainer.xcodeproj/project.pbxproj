@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4411D2942D5B387E009B4FAE /* PotOddsTrainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4411D2932D5B387E009B4FAE /* PotOddsTrainerView.swift */; };
 		446D9F572D487DE200F6B343 /* test2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 446D9F562D487DE200F6B343 /* test2.swift */; };
 		446D9F5C2D487E4F00F6B343 /* PokerHnadEvaluatar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44CEEF442D46625C00BE5132 /* PokerHnadEvaluatar.swift */; };
 		446D9F5E2D49344A00F6B343 /* ComboView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 446D9F5D2D49344A00F6B343 /* ComboView.swift */; };
@@ -47,6 +48,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4411D2932D5B387E009B4FAE /* PotOddsTrainerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PotOddsTrainerView.swift; sourceTree = "<group>"; };
 		446D9F1F2D4871D000F6B343 /* poker-trainer.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "poker-trainer.xctestplan"; sourceTree = "<group>"; };
 		446D9F472D487D9D00F6B343 /* poker-trainerTests2.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "poker-trainerTests2.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		446D9F542D487DE200F6B343 /* test2.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = test2.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -139,6 +141,7 @@
 		44EC93D92D40914B0025E01B /* poker-trainer */ = {
 			isa = PBXGroup;
 			children = (
+				4411D2932D5B387E009B4FAE /* PotOddsTrainerView.swift */,
 				447265502D53C99200D7E4FE /* PokerLogic.swift */,
 				4487533A2D512D3B00FF4112 /* PokerGame.swift */,
 				44EC93DA2D40914B0025E01B /* poker_trainerApp.swift */,
@@ -365,6 +368,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4411D2942D5B387E009B4FAE /* PotOddsTrainerView.swift in Sources */,
 				44CEEF452D46625C00BE5132 /* PokerHnadEvaluatar.swift in Sources */,
 				446D9F5E2D49344A00F6B343 /* ComboView.swift in Sources */,
 				447265512D53C99200D7E4FE /* PokerLogic.swift in Sources */,
@@ -611,7 +615,7 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -640,7 +644,7 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
