@@ -84,30 +84,30 @@ struct Card: Comparable, Hashable {
         var s = ""
         switch suit {
         case .hearts:
-            s = "hearts"
+            s = "Hearts"
         case .spades:
-            s = "spades"
+            s = "Spades"
         case .clubs:
-            s = "clubs"
+            s = "Clubs"
         case .diamonds:
-            s = "diamonds"
+            s = "Diamonds"
         }
         
         var r = ""
         switch rank {
         case .jack:
-            r = "jack"
+            r = "J"
         case .queen:
-            r = "queen"
+            r = "Q"
         case .king:
-            r = "king"
+            r = "K"
         case .ace:
-            r = "ace"
+            r = "A"
         default:
-            r = String(format: "%02d", rank.rawValue)
+            r = String(format: "%d", rank.rawValue)
         }
         
-        return "\(s)_\(r)"
+        return "card\(s)_\(r)"
     }
 
     var str: String {
