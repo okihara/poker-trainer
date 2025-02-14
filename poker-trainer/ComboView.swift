@@ -76,7 +76,7 @@ struct ComboView: View {
                 ForEach(game.board, id: \.self) { card in
                     Image(card.imageName)
                         .resizable()
-                        .frame(width: 40, height: 60)
+                        .frame(width: 38, height: 60)
                         .shadow(radius: 4)
                 }
             }.padding(.top, 16)
@@ -85,7 +85,7 @@ struct ComboView: View {
                 ForEach(game.hand, id: \.self) { card in
                     Image(card.imageName)
                         .resizable()
-                        .frame(width: 40, height: 60)
+                        .frame(width: 38, height: 60)
                         .shadow(radius: 4)
                 }
             }
