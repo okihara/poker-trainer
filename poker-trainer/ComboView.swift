@@ -253,11 +253,13 @@ struct ComboView: View {
         }
 
         // 結果メッセージを設定
-        resultMessage = "\(selectedHands.count)/\(correctHandArray.count)ハンド(\(correctComboCount)/\(totalComboCount)コンボ)"
-        
+        // 割合を計算
+        let ratio = Double(correctComboCount) / Double(totalComboCount)
+        resultMessage = "\(selectedHands.count)/\(correctHandArray.count)ハンド(\(correctComboCount)/\(totalComboCount)コンボ)\n割合:\(String(format: "%.1f", ratio * 100))%"
+
         // 回答済みフラグを設定
         hasAnswered = true
-        
+
         // 結果アニメーションを表示
         withAnimation {
             showResultAnimation = true
