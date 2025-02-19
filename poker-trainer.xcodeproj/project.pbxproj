@@ -16,41 +16,14 @@
 		447265522D53C99200D7E4FE /* PokerLogic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 447265502D53C99200D7E4FE /* PokerLogic.swift */; };
 		4487533B2D512D3C00FF4112 /* PokerGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4487533A2D512D3B00FF4112 /* PokerGame.swift */; };
 		44CEEF452D46625C00BE5132 /* PokerHnadEvaluatar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44CEEF442D46625C00BE5132 /* PokerHnadEvaluatar.swift */; };
-		44CEEF462D46625C00BE5132 /* PokerHnadEvaluatar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44CEEF442D46625C00BE5132 /* PokerHnadEvaluatar.swift */; };
 		44EC93DB2D40914B0025E01B /* poker_trainerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44EC93DA2D40914B0025E01B /* poker_trainerApp.swift */; };
 		44EC93DD2D40914B0025E01B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44EC93DC2D40914B0025E01B /* ContentView.swift */; };
 		44EC93DF2D40914C0025E01B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 44EC93DE2D40914C0025E01B /* Assets.xcassets */; };
 		44EC93E22D40914C0025E01B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 44EC93E12D40914C0025E01B /* Preview Assets.xcassets */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		446D9F4B2D487D9D00F6B343 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 44EC93CF2D40914B0025E01B /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 44EC93D62D40914B0025E01B;
-			remoteInfo = "poker-trainer";
-		};
-		44EC93E82D40914C0025E01B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 44EC93CF2D40914B0025E01B /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 44EC93D62D40914B0025E01B;
-			remoteInfo = "poker-trainer";
-		};
-		44EC93F22D40914C0025E01B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 44EC93CF2D40914B0025E01B /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 44EC93D62D40914B0025E01B;
-			remoteInfo = "poker-trainer";
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXFileReference section */
 		4411D2932D5B387E009B4FAE /* PotOddsTrainerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PotOddsTrainerView.swift; sourceTree = "<group>"; };
-		446D9F1F2D4871D000F6B343 /* poker-trainer.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = "poker-trainer.xctestplan"; sourceTree = "<group>"; };
-		446D9F472D487D9D00F6B343 /* poker-trainerTests2.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "poker-trainerTests2.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		446D9F542D487DE200F6B343 /* test2.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = test2.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		446D9F562D487DE200F6B343 /* test2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = test2.swift; sourceTree = "<group>"; };
 		446D9F5D2D49344A00F6B343 /* ComboView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComboView.swift; sourceTree = "<group>"; };
@@ -64,18 +37,9 @@
 		44EC93DC2D40914B0025E01B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		44EC93DE2D40914C0025E01B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		44EC93E12D40914C0025E01B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		44EC93E72D40914C0025E01B /* poker-trainerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "poker-trainerTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		44EC93F12D40914C0025E01B /* poker-trainerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "poker-trainerUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		446D9F442D487D9D00F6B343 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		446D9F512D487DE200F6B343 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -84,20 +48,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		44EC93D42D40914B0025E01B /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		44EC93E42D40914C0025E01B /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		44EC93EE2D40914C0025E01B /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -119,7 +69,6 @@
 			isa = PBXGroup;
 			children = (
 				4473D5CF2D54EA28006D9C0C /* test2.xctestplan */,
-				446D9F1F2D4871D000F6B343 /* poker-trainer.xctestplan */,
 				44EC93D92D40914B0025E01B /* poker-trainer */,
 				446D9F552D487DE200F6B343 /* logic-test */,
 				44EC93D82D40914B0025E01B /* Products */,
@@ -130,9 +79,6 @@
 			isa = PBXGroup;
 			children = (
 				44EC93D72D40914B0025E01B /* poker-trainer.app */,
-				44EC93E72D40914C0025E01B /* poker-trainerTests.xctest */,
-				44EC93F12D40914C0025E01B /* poker-trainerUITests.xctest */,
-				446D9F472D487D9D00F6B343 /* poker-trainerTests2.xctest */,
 				446D9F542D487DE200F6B343 /* test2.xctest */,
 			);
 			name = Products;
@@ -166,24 +112,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		446D9F462D487D9D00F6B343 /* poker-trainerTests2 */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 446D9F4D2D487D9D00F6B343 /* Build configuration list for PBXNativeTarget "poker-trainerTests2" */;
-			buildPhases = (
-				446D9F432D487D9D00F6B343 /* Sources */,
-				446D9F442D487D9D00F6B343 /* Frameworks */,
-				446D9F452D487D9D00F6B343 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				446D9F4C2D487D9D00F6B343 /* PBXTargetDependency */,
-			);
-			name = "poker-trainerTests2";
-			productName = "poker-trainerTests2";
-			productReference = 446D9F472D487D9D00F6B343 /* poker-trainerTests2.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 		446D9F532D487DE200F6B343 /* test2 */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 446D9F582D487DE200F6B343 /* Build configuration list for PBXNativeTarget "test2" */;
@@ -218,42 +146,6 @@
 			productReference = 44EC93D72D40914B0025E01B /* poker-trainer.app */;
 			productType = "com.apple.product-type.application";
 		};
-		44EC93E62D40914C0025E01B /* poker-trainerTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 44EC93FE2D40914C0025E01B /* Build configuration list for PBXNativeTarget "poker-trainerTests" */;
-			buildPhases = (
-				44EC93E32D40914C0025E01B /* Sources */,
-				44EC93E42D40914C0025E01B /* Frameworks */,
-				44EC93E52D40914C0025E01B /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				44EC93E92D40914C0025E01B /* PBXTargetDependency */,
-			);
-			name = "poker-trainerTests";
-			productName = "poker-trainerTests";
-			productReference = 44EC93E72D40914C0025E01B /* poker-trainerTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		44EC93F02D40914C0025E01B /* poker-trainerUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 44EC94012D40914C0025E01B /* Build configuration list for PBXNativeTarget "poker-trainerUITests" */;
-			buildPhases = (
-				44EC93ED2D40914C0025E01B /* Sources */,
-				44EC93EE2D40914C0025E01B /* Frameworks */,
-				44EC93EF2D40914C0025E01B /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				44EC93F32D40914C0025E01B /* PBXTargetDependency */,
-			);
-			name = "poker-trainerUITests";
-			productName = "poker-trainerUITests";
-			productReference = 44EC93F12D40914C0025E01B /* poker-trainerUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -264,23 +156,11 @@
 				LastSwiftUpdateCheck = 1500;
 				LastUpgradeCheck = 1500;
 				TargetAttributes = {
-					446D9F462D487D9D00F6B343 = {
-						CreatedOnToolsVersion = 15.0.1;
-						TestTargetID = 44EC93D62D40914B0025E01B;
-					};
 					446D9F532D487DE200F6B343 = {
 						CreatedOnToolsVersion = 15.0.1;
 					};
 					44EC93D62D40914B0025E01B = {
 						CreatedOnToolsVersion = 15.0.1;
-					};
-					44EC93E62D40914C0025E01B = {
-						CreatedOnToolsVersion = 15.0.1;
-						TestTargetID = 44EC93D62D40914B0025E01B;
-					};
-					44EC93F02D40914C0025E01B = {
-						CreatedOnToolsVersion = 15.0.1;
-						TestTargetID = 44EC93D62D40914B0025E01B;
 					};
 				};
 			};
@@ -298,22 +178,12 @@
 			projectRoot = "";
 			targets = (
 				44EC93D62D40914B0025E01B /* poker-trainer */,
-				44EC93E62D40914C0025E01B /* poker-trainerTests */,
-				44EC93F02D40914C0025E01B /* poker-trainerUITests */,
-				446D9F462D487D9D00F6B343 /* poker-trainerTests2 */,
 				446D9F532D487DE200F6B343 /* test2 */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		446D9F452D487D9D00F6B343 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		446D9F522D487DE200F6B343 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -330,30 +200,9 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		44EC93E52D40914C0025E01B /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		44EC93EF2D40914C0025E01B /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		446D9F432D487D9D00F6B343 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		446D9F502D487DE200F6B343 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -379,76 +228,9 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		44EC93E32D40914C0025E01B /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				44CEEF462D46625C00BE5132 /* PokerHnadEvaluatar.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		44EC93ED2D40914C0025E01B /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXTargetDependency section */
-		446D9F4C2D487D9D00F6B343 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 44EC93D62D40914B0025E01B /* poker-trainer */;
-			targetProxy = 446D9F4B2D487D9D00F6B343 /* PBXContainerItemProxy */;
-		};
-		44EC93E92D40914C0025E01B /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 44EC93D62D40914B0025E01B /* poker-trainer */;
-			targetProxy = 44EC93E82D40914C0025E01B /* PBXContainerItemProxy */;
-		};
-		44EC93F32D40914C0025E01B /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 44EC93D62D40914B0025E01B /* poker-trainer */;
-			targetProxy = 44EC93F22D40914C0025E01B /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
 /* Begin XCBuildConfiguration section */
-		446D9F4E2D487D9D00F6B343 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "daisanz.poker-trainerTests2";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/poker-trainer.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/poker-trainer";
-			};
-			name = Debug;
-		};
-		446D9F4F2D487D9D00F6B343 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "daisanz.poker-trainerTests2";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/poker-trainer.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/poker-trainer";
-			};
-			name = Release;
-		};
 		446D9F592D487DE200F6B343 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -658,92 +440,9 @@
 			};
 			name = Release;
 		};
-		44EC93FF2D40914C0025E01B /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 73KUPAKW2U;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "daisanz.poker-trainerTests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/poker-trainer.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/poker-trainer";
-			};
-			name = Debug;
-		};
-		44EC94002D40914C0025E01B /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 73KUPAKW2U;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "daisanz.poker-trainerTests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/poker-trainer.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/poker-trainer";
-			};
-			name = Release;
-		};
-		44EC94022D40914C0025E01B /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "daisanz.poker-trainerUITests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = "poker-trainer";
-			};
-			name = Debug;
-		};
-		44EC94032D40914C0025E01B /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "daisanz.poker-trainerUITests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = "poker-trainer";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		446D9F4D2D487D9D00F6B343 /* Build configuration list for PBXNativeTarget "poker-trainerTests2" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				446D9F4E2D487D9D00F6B343 /* Debug */,
-				446D9F4F2D487D9D00F6B343 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		446D9F582D487DE200F6B343 /* Build configuration list for PBXNativeTarget "test2" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -767,24 +466,6 @@
 			buildConfigurations = (
 				44EC93FC2D40914C0025E01B /* Debug */,
 				44EC93FD2D40914C0025E01B /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		44EC93FE2D40914C0025E01B /* Build configuration list for PBXNativeTarget "poker-trainerTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				44EC93FF2D40914C0025E01B /* Debug */,
-				44EC94002D40914C0025E01B /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		44EC94012D40914C0025E01B /* Build configuration list for PBXNativeTarget "poker-trainerUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				44EC94022D40914C0025E01B /* Debug */,
-				44EC94032D40914C0025E01B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
