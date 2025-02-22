@@ -70,26 +70,26 @@ struct ComboView: View {
                 .pickerStyle(.menu)
                 .padding(.horizontal)
             }
-            .padding(.top, 16)
+            .padding(.top, 8)
             
             HStack {
                 ForEach(game.board, id: \.self) { card in
                     Image(card.imageName)
                         .resizable()
-                        .frame(width: 38, height: 60)
+                        .frame(width: 42, height: 66)
                         .shadow(radius: 4)
                 }
-            }.padding(.top, 16)
+            }.padding(.top, 8)
             
             HStack {
                 ForEach(game.hand, id: \.self) { card in
                     Image(card.imageName)
                         .resizable()
-                        .frame(width: 38, height: 60)
+                        .frame(width: 42, height: 66)
                         .shadow(radius: 4)
                 }
             }
-            .padding(.vertical, 16)
+            .padding(.vertical, 8)
 
             
             // 結果メッセージの表示
@@ -107,7 +107,7 @@ struct ComboView: View {
                         .opacity(showResultAnimation ? 1.0 : 0.0)
                         .animation(.easeIn(duration: 0.2).delay(0.3), value: showResultAnimation)
                 }
-                .padding(.vertical, 8)
+                .padding(.vertical, 4)
             }
             
             Spacer() // Push all content to the top
@@ -154,8 +154,8 @@ struct ComboView: View {
                     }
                 }
             }
-            .padding(.horizontal, 16)
-            .padding(.bottom, 16)
+            .padding(.horizontal, 8)
+            .padding(.bottom, 8)
 
             // グリッド表示
             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 0), count: 13), spacing: 1) {
@@ -255,7 +255,8 @@ struct ComboView: View {
         // 結果メッセージを設定
         // 割合を計算
         let ratio = Double(correctComboCount) / Double(totalComboCount)
-        resultMessage = "\(selectedHands.count)/\(correctHandArray.count)ハンド(\(correctComboCount)/\(totalComboCount)コンボ)\n割合:\(String(format: "%.1f", ratio * 100))%"
+        resultMessage = "正解: \(correctHandArray.count)ハンド(\(selectedHands.count))\n" +
+        "割合: \(String(format: "%.1f", ratio * 100))% (\(correctComboCount)/\(totalComboCount)コンボ)"
 
         // 回答済みフラグを設定
         hasAnswered = true
@@ -343,7 +344,7 @@ struct HandCell: View {
     var body: some View {
         Text(hand.name)
             .font(.system(size: 12, weight: .bold))
-            .frame(width: 30, height: 30)
+            .frame(width: 33, height: 33)
             .background(backgroundColor)
             .foregroundColor(.white)
             .cornerRadius(0)
