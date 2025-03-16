@@ -139,6 +139,17 @@ class PokerGame: ObservableObject {
     @Published var selectedPairTexture: PairTexture?
     @Published var selectedHighCardTexture: HighCardTexture?
     @Published var textureMode: Bool = false // テクスチャー判断モードかどうか
+    @Published var isCorrect: Bool = false // 正解かどうか
+    @Published var showNextButton: Bool = false // 次の問題へボタンを表示するかどうか
+
+    // 各ポジションのレンジ定義
+    // ...
+
+    // テクスチャー判断用の列挙型
+    // ...
+
+    // テクスチャー判断用の変数
+    // ...
 
     // ランダムなボードを生成
     func startRandomBoard(position: ComboView.Position, boardSize: ComboView.BoardSize) {
@@ -363,19 +374,28 @@ class PokerGame: ObservableObject {
                         selectedPairTexture == correctPair &&
                         selectedHighCardTexture == correctHighCard
         
+        self.isCorrect = isCorrect
+        
         if isCorrect {
             feedback = "正解！"
+            
+            isLoading = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                self.isLoading = false
+                self.startTextureGame() // 新しい問題を生成
+            }
         } else {
             feedback = "不正解！\n正解: \(correctSuit.rawValue), \(correctConnect.rawValue), \(correctPair.rawValue), \(correctHighCard.rawValue)"
-        }
-        
-        isLoading = true
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-            self.isLoading = false
-            self.startTextureGame() // 新しい問題を生成
+            showNextButton = true // 次の問題へボタンを表示
         }
         
         return isCorrect
+    }
+    
+    // 次の問題へ進む
+    func nextTextureQuestion() {
+        showNextButton = false
+        startTextureGame()
     }
     
     // プリフロップレンジを定義

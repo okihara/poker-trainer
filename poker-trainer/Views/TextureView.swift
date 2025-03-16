@@ -55,6 +55,23 @@ struct TextureView: View {
                         .font(.headline)
                         .padding(.top, 10)
                         .multilineTextAlignment(.center)
+                    
+                    // 不正解の場合、次の問題へボタンを表示
+                    if game.showNextButton {
+                        Button(action: {
+                            game.nextTextureQuestion()
+                        }) {
+                            Text("次の問題へ")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                                .padding()
+                                .frame(maxWidth: .infinity)
+                                .background(Color.blue)
+                                .cornerRadius(10)
+                        }
+                        .padding(.horizontal)
+                        .padding(.top, 10)
+                    }
                 }
                 
                 // テクスチャー判断UI
