@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		4411D2942D5B387E009B4FAE /* PotOddsTrainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4411D2932D5B387E009B4FAE /* PotOddsTrainerView.swift */; };
+		4414EC832D87216900B61011 /* OutsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4414EC822D87216900B61011 /* OutsView.swift */; };
+		4414EC852D87220A00B61011 /* PokerGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4487533A2D512D3B00FF4112 /* PokerGame.swift */; };
 		446D9F572D487DE200F6B343 /* test2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 446D9F562D487DE200F6B343 /* test2.swift */; };
 		446D9F5C2D487E4F00F6B343 /* PokerHnadEvaluatar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44CEEF442D46625C00BE5132 /* PokerHnadEvaluatar.swift */; };
 		446D9F5E2D49344A00F6B343 /* ComboView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 446D9F5D2D49344A00F6B343 /* ComboView.swift */; };
@@ -24,6 +26,7 @@
 
 /* Begin PBXFileReference section */
 		4411D2932D5B387E009B4FAE /* PotOddsTrainerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PotOddsTrainerView.swift; sourceTree = "<group>"; };
+		4414EC822D87216900B61011 /* OutsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutsView.swift; sourceTree = "<group>"; };
 		446D9F542D487DE200F6B343 /* test2.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = test2.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		446D9F562D487DE200F6B343 /* test2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = test2.swift; sourceTree = "<group>"; };
 		446D9F5D2D49344A00F6B343 /* ComboView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComboView.swift; sourceTree = "<group>"; };
@@ -57,6 +60,28 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4414EC812D8720C900B61011 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				4411D2932D5B387E009B4FAE /* PotOddsTrainerView.swift */,
+				446D9F5D2D49344A00F6B343 /* ComboView.swift */,
+				446D9F612D4F833F00F6B343 /* ChatView.swift */,
+				44EC93DC2D40914B0025E01B /* ContentView.swift */,
+				4414EC822D87216900B61011 /* OutsView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		4414EC842D8721D600B61011 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				447265502D53C99200D7E4FE /* PokerLogic.swift */,
+				4487533A2D512D3B00FF4112 /* PokerGame.swift */,
+				44CEEF442D46625C00BE5132 /* PokerHnadEvaluatar.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
 		446D9F552D487DE200F6B343 /* logic-test */ = {
 			isa = PBXGroup;
 			children = (
@@ -87,14 +112,9 @@
 		44EC93D92D40914B0025E01B /* poker-trainer */ = {
 			isa = PBXGroup;
 			children = (
-				4411D2932D5B387E009B4FAE /* PotOddsTrainerView.swift */,
-				447265502D53C99200D7E4FE /* PokerLogic.swift */,
-				4487533A2D512D3B00FF4112 /* PokerGame.swift */,
+				4414EC842D8721D600B61011 /* Models */,
+				4414EC812D8720C900B61011 /* Views */,
 				44EC93DA2D40914B0025E01B /* poker_trainerApp.swift */,
-				44EC93DC2D40914B0025E01B /* ContentView.swift */,
-				446D9F5D2D49344A00F6B343 /* ComboView.swift */,
-				446D9F612D4F833F00F6B343 /* ChatView.swift */,
-				44CEEF442D46625C00BE5132 /* PokerHnadEvaluatar.swift */,
 				44EC93DE2D40914C0025E01B /* Assets.xcassets */,
 				44EC93E02D40914C0025E01B /* Preview Content */,
 			);
@@ -208,6 +228,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				446D9F5C2D487E4F00F6B343 /* PokerHnadEvaluatar.swift in Sources */,
+				4414EC852D87220A00B61011 /* PokerGame.swift in Sources */,
 				446D9F572D487DE200F6B343 /* test2.swift in Sources */,
 				447265522D53C99200D7E4FE /* PokerLogic.swift in Sources */,
 			);
@@ -218,6 +239,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4411D2942D5B387E009B4FAE /* PotOddsTrainerView.swift in Sources */,
+				4414EC832D87216900B61011 /* OutsView.swift in Sources */,
 				44CEEF452D46625C00BE5132 /* PokerHnadEvaluatar.swift in Sources */,
 				446D9F5E2D49344A00F6B343 /* ComboView.swift in Sources */,
 				447265512D53C99200D7E4FE /* PokerLogic.swift in Sources */,
