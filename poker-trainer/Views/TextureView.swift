@@ -50,37 +50,122 @@ struct TextureView: View {
                     }
                 }
                 
-                Text("アウツを選んでください")
-                    .font(.headline)
-                    .padding(.top, 10)
-                
-                VStack {
-                    ForEach(game.options, id: \.self) { opt in
-                        Button(action: {
-                            game.checkAnswer(opt)
-                        }) {
-                            Text("\(opt)")
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                                .background(Color.blue)
-                                .foregroundColor(.white)
-                                .bold()
-                                .cornerRadius(8)
-                        }
-                    }
-
+                if !game.feedback.isEmpty {
+                    Text(game.feedback)
+                        .font(.headline)
+                        .padding(.top, 10)
+                        .multilineTextAlignment(.center)
                 }
                 
-                Text(game.feedback)
-                    .font(.headline)
-                    .padding(.top, 10)
-
+                // テクスチャー判断UI
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 15) {
+                        // スートの割合
+                        VStack(alignment: .leading) {
+                            Text("スートの割合")
+                                .font(.headline)
+                            
+                            HStack {
+                                ForEach(PokerGame.SuitTexture.allCases) { texture in
+                                    Button(action: {
+                                        game.selectedSuitTexture = texture
+                                        checkAllSelected()
+                                    }) {
+                                        Text(texture.rawValue)
+                                            .padding(.horizontal, 10)
+                                            .padding(.vertical, 5)
+                                            .background(game.selectedSuitTexture == texture ? Color.blue : Color.gray.opacity(0.3))
+                                            .foregroundColor(game.selectedSuitTexture == texture ? .white : .primary)
+                                            .cornerRadius(8)
+                                    }
+                                }
+                            }
+                        }
+                        
+                        // コネクト具合
+                        VStack(alignment: .leading) {
+                            Text("コネクト具合")
+                                .font(.headline)
+                            
+                            HStack {
+                                ForEach(PokerGame.ConnectTexture.allCases) { texture in
+                                    Button(action: {
+                                        game.selectedConnectTexture = texture
+                                        checkAllSelected()
+                                    }) {
+                                        Text(texture.rawValue)
+                                            .padding(.horizontal, 10)
+                                            .padding(.vertical, 5)
+                                            .background(game.selectedConnectTexture == texture ? Color.blue : Color.gray.opacity(0.3))
+                                            .foregroundColor(game.selectedConnectTexture == texture ? .white : .primary)
+                                            .cornerRadius(8)
+                                    }
+                                }
+                            }
+                        }
+                        
+                        // ペア具合
+                        VStack(alignment: .leading) {
+                            Text("ペア具合")
+                                .font(.headline)
+                            
+                            HStack {
+                                ForEach(PokerGame.PairTexture.allCases) { texture in
+                                    Button(action: {
+                                        game.selectedPairTexture = texture
+                                        checkAllSelected()
+                                    }) {
+                                        Text(texture.rawValue)
+                                            .padding(.horizontal, 10)
+                                            .padding(.vertical, 5)
+                                            .background(game.selectedPairTexture == texture ? Color.blue : Color.gray.opacity(0.3))
+                                            .foregroundColor(game.selectedPairTexture == texture ? .white : .primary)
+                                            .cornerRadius(8)
+                                    }
+                                }
+                            }
+                        }
+                        
+                        // ハイボード具合
+                        VStack(alignment: .leading) {
+                            Text("ハイボード具合")
+                                .font(.headline)
+                            
+                            HStack {
+                                ForEach(PokerGame.HighCardTexture.allCases) { texture in
+                                    Button(action: {
+                                        game.selectedHighCardTexture = texture
+                                        checkAllSelected()
+                                    }) {
+                                        Text(texture.rawValue)
+                                            .padding(.horizontal, 10)
+                                            .padding(.vertical, 5)
+                                            .background(game.selectedHighCardTexture == texture ? Color.blue : Color.gray.opacity(0.3))
+                                            .foregroundColor(game.selectedHighCardTexture == texture ? .white : .primary)
+                                            .cornerRadius(8)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    .padding()
+                }
             }
         }
         .onAppear {
-            game.startGame()
+            game.startTextureGame()
         }
         .padding()
+    }
+    
+    // すべての項目が選択されたかチェックし、選択されていれば回答処理を実行
+    private func checkAllSelected() {
+        if game.selectedSuitTexture != nil &&
+           game.selectedConnectTexture != nil &&
+           game.selectedPairTexture != nil &&
+           game.selectedHighCardTexture != nil {
+            game.checkTextureAnswer()
+        }
     }
 }
 

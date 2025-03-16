@@ -33,7 +33,7 @@ class PokerGame: ObservableObject {
     @Published var evaluator: PokerHandEvaluator = PokerHandEvaluator()
     @Published var selectedRange: HandRange? // 現在選択されているレンジ
     @Published var opponentRange: HandRange? // 相手のレンジ
-
+    
     let suits: [Suit] = [.hearts, .spades, .diamonds, .clubs]
     let ranks: [Rank] = [.two, .three, .four, .five, .six, .seven, .eight, .nine, .ten, .jack, .queen, .king, .ace]
 
@@ -100,6 +100,45 @@ class PokerGame: ObservableObject {
             "98o", "87o", "76o", "65o", "54o"
         ])
     )
+
+    // テクスチャー判断用の列挙型
+    enum SuitTexture: String, CaseIterable, Identifiable {
+        case rainbow = "レインボー"
+        case twoTone = "ツートーン"
+        case monotone = "モノトーン"
+        
+        var id: String { self.rawValue }
+    }
+
+    enum ConnectTexture: String, CaseIterable, Identifiable {
+        case disconnected = "ディスコネクテッド"
+        case connected = "コネクテッド"
+        
+        var id: String { self.rawValue }
+    }
+
+    enum PairTexture: String, CaseIterable, Identifiable {
+        case noPair = "ペア無し"
+        case paired = "ペアボード"
+        case trips = "トリプルボード"
+        
+        var id: String { self.rawValue }
+    }
+
+    enum HighCardTexture: String, CaseIterable, Identifiable {
+        case aceHigh = "Aハイボード"
+        case kqHigh = "K/Qハイボード"
+        case jOrLower = "Jハイボード以下"
+        
+        var id: String { self.rawValue }
+    }
+
+    // テクスチャー判断用の変数
+    @Published var selectedSuitTexture: SuitTexture?
+    @Published var selectedConnectTexture: ConnectTexture?
+    @Published var selectedPairTexture: PairTexture?
+    @Published var selectedHighCardTexture: HighCardTexture?
+    @Published var textureMode: Bool = false // テクスチャー判断モードかどうか
 
     // ランダムなボードを生成
     func startRandomBoard(position: ComboView.Position, boardSize: ComboView.BoardSize) {
@@ -226,6 +265,117 @@ class PokerGame: ObservableObject {
         } else {
             feedback = "不正解！(\(outs))"
         }
+    }
+    
+    // テクスチャー判断機能
+    func startTextureGame() {
+        textureMode = true
+        isLoading = false
+        feedback = ""
+        
+        // 選択をリセット
+        selectedSuitTexture = nil
+        selectedConnectTexture = nil
+        selectedPairTexture = nil
+        selectedHighCardTexture = nil
+        
+        var deck = createDeck()
+        hand = Array(deck.prefix(2)) // 最初の2枚を手札
+        deck.removeFirst(2)
+        
+        board = Array(deck.prefix(3)) // 次の3枚をボード
+        deck.removeFirst(3)
+    }
+    
+    // テクスチャー判断の正解を計算
+    func getCorrectSuitTexture() -> SuitTexture {
+        let suits = Set(board.map { $0.suit })
+        switch suits.count {
+        case 1:
+            return .monotone
+        case 2:
+            return .twoTone
+        case 3:
+            return .rainbow
+        default:
+            return .rainbow
+        }
+    }
+    
+    func getCorrectConnectTexture() -> ConnectTexture {
+        let ranks = board.map { $0.rank.rawValue }.sorted()
+        
+        // 連続した数字が存在するか確認
+        for i in 0..<ranks.count-1 {
+            if ranks[i+1] - ranks[i] <= 2 {
+                return .connected
+            }
+        }
+        
+        // エースを1としても確認（A, 2, 3などの場合）
+        if ranks.contains(14) { // Aが含まれている場合
+            var modifiedRanks = ranks.filter { $0 != 14 } // Aを除外
+            modifiedRanks.append(1) // Aを1として追加
+            modifiedRanks.sort()
+            
+            for i in 0..<modifiedRanks.count-1 {
+                if modifiedRanks[i+1] - modifiedRanks[i] <= 2 {
+                    return .connected
+                }
+            }
+        }
+        
+        return .disconnected
+    }
+    
+    func getCorrectPairTexture() -> PairTexture {
+        let rankCounts = Dictionary(grouping: board, by: { $0.rank }).mapValues { $0.count }
+        
+        if rankCounts.values.contains(3) {
+            return .trips
+        } else if rankCounts.values.contains(2) {
+            return .paired
+        } else {
+            return .noPair
+        }
+    }
+    
+    func getCorrectHighCardTexture() -> HighCardTexture {
+        let highestRank = board.map { $0.rank.rawValue }.max() ?? 0
+        
+        if highestRank == 14 { // A
+            return .aceHigh
+        } else if highestRank >= 12 { // K or Q
+            return .kqHigh
+        } else {
+            return .jOrLower
+        }
+    }
+    
+    func checkTextureAnswer() -> Bool {
+        let correctSuit = getCorrectSuitTexture()
+        let correctConnect = getCorrectConnectTexture()
+        let correctPair = getCorrectPairTexture()
+        let correctHighCard = getCorrectHighCardTexture()
+        
+        let isCorrect = selectedSuitTexture == correctSuit &&
+                        selectedConnectTexture == correctConnect &&
+                        selectedPairTexture == correctPair &&
+                        selectedHighCardTexture == correctHighCard
+        
+        if isCorrect {
+            feedback = "正解！"
+        } else {
+            feedback = "不正解！\n正解: \(correctSuit.rawValue), \(correctConnect.rawValue), \(correctPair.rawValue), \(correctHighCard.rawValue)"
+        }
+        
+        isLoading = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            self.isLoading = false
+            self.startTextureGame() // 新しい問題を生成
+        }
+        
+        return isCorrect
     }
     
     // プリフロップレンジを定義
