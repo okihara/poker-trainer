@@ -111,8 +111,9 @@ class PokerGame: ObservableObject {
     }
 
     enum ConnectTexture: String, CaseIterable, Identifiable {
-        case disconnected = "ディスコネクテッド"
-        case connected = "コネクテッド"
+        case disconnected = "非コネクト"
+        case openEndedDraw = "OESDあり"
+        case connected = "コネクト"
         
         var id: String { self.rawValue }
     }
@@ -314,25 +315,25 @@ class PokerGame: ObservableObject {
     }
     
     func getCorrectConnectTexture() -> ConnectTexture {
-        let ranks = board.map { $0.rank.rawValue }.sorted()
+        // 重複を排除したランクの配列を作成
+        let ranks = Array(Set(board.map { $0.rank.rawValue })).sorted()
         
-        // 連続した数字が存在するか確認
-        for i in 0..<ranks.count-1 {
-            if ranks[i+1] - ranks[i] <= 2 {
-                return .connected
-            }
+        // 通常のケース（Aを14として扱う）
+        let gapsNormal = calculateGaps(ranks: ranks)
+        let result = evaluateConnectedness(gaps: gapsNormal)
+        if result != .disconnected {
+            return result
         }
         
         // エースを1としても確認（A, 2, 3などの場合）
         if ranks.contains(14) { // Aが含まれている場合
-            var modifiedRanks = ranks.filter { $0 != 14 } // Aを除外
-            modifiedRanks.append(1) // Aを1として追加
+            var modifiedRanks = Array(Set(ranks.filter { $0 != 14 } + [1])) // Aを除外し、Aを1として追加
             modifiedRanks.sort()
             
-            for i in 0..<modifiedRanks.count-1 {
-                if modifiedRanks[i+1] - modifiedRanks[i] <= 2 {
-                    return .connected
-                }
+            let gapsWithAceAsOne = calculateGaps(ranks: modifiedRanks)
+            let resultWithAceAsOne = evaluateConnectedness(gaps: gapsWithAceAsOne)
+            if resultWithAceAsOne != .disconnected {
+                return resultWithAceAsOne
             }
         }
         
@@ -377,8 +378,8 @@ class PokerGame: ObservableObject {
         self.isCorrect = isCorrect
         
         if isCorrect {
-            feedback = "正解！"
-            
+            feedback = "正解！\n\(correctSuit.rawValue), \(correctConnect.rawValue), \(correctPair.rawValue), \(correctHighCard.rawValue)"
+
             isLoading = true
             DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
                 self.isLoading = false
@@ -401,5 +402,41 @@ class PokerGame: ObservableObject {
     // プリフロップレンジを定義
     func isHandInRange(_ cards: [Card]) -> Bool {
         return selectedRange?.contains(cards) ?? false
-    }   
+    }
+    
+    // 隣接する数字間のギャップを計算する関数
+    private func calculateGaps(ranks: [Int]) -> [Int] {
+        var gaps: [Int] = []
+        for i in 0..<ranks.count-1 {
+            gaps.append(ranks[i+1] - ranks[i] - 1)
+        }
+        print("gaps: \(gaps)")        
+        return gaps
+    }
+    
+    // ギャップに基づいてコネクトネスを評価する関数
+    private func evaluateConnectedness(gaps: [Int]) -> ConnectTexture {
+        // ボードに3枚以上のカードがある場合のみ評価
+        if gaps.count >= 2 {
+            // 全てのギャップの合計が2以下ならconnected
+            let totalGap = gaps.reduce(0, +)
+            if totalGap <= 2 {
+                return .connected
+            }
+            
+            // 隣接する2枚のカードのギャップが2以下ならopenEndedDraw
+            for gap in gaps {
+                if gap <= 2 {
+                    return .openEndedDraw
+                }
+            }
+        } else if gaps.count == 1 {
+            // ボードに2枚のカードしかない場合
+            if gaps[0] <= 2 {
+                return .openEndedDraw
+            }
+        }
+        
+        return .disconnected
+    }
 }

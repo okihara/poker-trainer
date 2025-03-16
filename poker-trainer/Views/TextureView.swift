@@ -37,6 +37,7 @@ struct TextureView: View {
                             .shadow(radius: 4)
                     }
                 }
+                .padding(.vertical, 20)
                 
                 if !game.feedback.isEmpty {
                     Text(game.feedback)
@@ -64,7 +65,7 @@ struct TextureView: View {
                 
                 // テクスチャー判断UI
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 15) {
+                    VStack(alignment: .leading, spacing: 20) {
                         // スートの割合
                         VStack(alignment: .leading) {
                             Text("スートの割合")
@@ -169,7 +170,7 @@ struct TextureView: View {
            game.selectedConnectTexture != nil &&
            game.selectedPairTexture != nil &&
            game.selectedHighCardTexture != nil {
-            game.checkTextureAnswer()
+            var res = game.checkTextureAnswer()
         }
     }
 }
