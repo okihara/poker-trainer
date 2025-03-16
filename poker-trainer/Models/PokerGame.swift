@@ -118,17 +118,17 @@ class PokerGame: ObservableObject {
     }
 
     enum PairTexture: String, CaseIterable, Identifiable {
-        case noPair = "ペア無し"
-        case paired = "ペアボード"
-        case trips = "トリプルボード"
+        case noPair = "ペアなし"
+        case paired = "ペアあり"
+        case trips = "トリプル"
         
         var id: String { self.rawValue }
     }
 
     enum HighCardTexture: String, CaseIterable, Identifiable {
-        case aceHigh = "Aハイボード"
-        case kqHigh = "K/Qハイボード"
-        case jOrLower = "Jハイボード以下"
+        case aceHigh = "Aハイ"
+        case kqHigh = "K/Qハイ"
+        case jOrLower = "Jハイ以下"
         
         var id: String { self.rawValue }
     }

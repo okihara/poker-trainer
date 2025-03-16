@@ -25,24 +25,12 @@ struct TextureView: View {
                 }
                 .transition(.opacity) // フェードイン/アウト
             } else {
-                Text("コミュニティカード")
+                Text("正しいテクスチャ情報を選べ")
                     .font(.title)
                     .padding(.top, 20)
                 
                 HStack {
                     ForEach(game.board, id: \.self) { card in
-                        Image(card.imageName)
-                            .resizable()
-                            .frame(width: 60, height: 90)
-                            .shadow(radius: 4)
-                    }
-                }
-                
-                Text("手札")
-                    .font(.title)
-                    .padding(.top, 5)
-                HStack {
-                    ForEach(game.hand, id: \.self) { card in
                         Image(card.imageName)
                             .resizable()
                             .frame(width: 60, height: 90)
