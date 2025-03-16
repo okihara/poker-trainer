@@ -210,8 +210,7 @@ class PokerGame: ObservableObject {
     }
     
     private func calculateOuts() -> Int {
-        let outs = evaluator.calculateOuts(hand: hand, board: board)
-        return outs.count
+        return evaluator.calculateOuts(hand: hand, board: board).count
     }
     
     func checkAnswer(_ answer: Int) {

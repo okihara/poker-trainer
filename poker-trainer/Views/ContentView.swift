@@ -13,9 +13,9 @@ struct ContentView: View {
                     Label("アウツ練習", systemImage: "gamecontroller")
                 }
             
-            PotOddsTrainerView()
+            TextureView()
                 .tabItem {
-                    Label("ポットオッズ", systemImage: "percent")
+                    Label("フロップ", systemImage: "percent")
                 }
             
             ChatView()
