@@ -6,6 +6,8 @@
 
 - ポットオッズトレーニング機能
 - ハンドコンボの表示と学習機能
+- アウツ計算機能
+- チャット機能
 - ポーカーゲームのシミュレーション
 
 ## 技術スタック
@@ -20,12 +22,20 @@
 poker-trainer/
 ├── poker-trainer/          # メインアプリケーションコード
 │   ├── poker_trainerApp.swift  # アプリケーションのエントリーポイント
-│   ├── ContentView.swift       # メインビュー
-│   ├── PotOddsTrainerView.swift # ポットオッズトレーニング機能
-│   ├── ComboView.swift         # ハンドコンボ表示機能
-│   └── PokerGame.swift         # ゲームロジック
+│   ├── Views/                  # ビュー関連ファイル
+│   │   ├── ContentView.swift       # メインビュー
+│   │   ├── PotOddsTrainerView.swift # ポットオッズトレーニング機能
+│   │   ├── ComboView.swift         # ハンドコンボ表示機能
+│   │   ├── OutsView.swift          # アウツ計算機能
+│   │   └── ChatView.swift          # チャット機能
+│   ├── Models/                 # モデル・ロジック関連ファイル
+│   │   ├── PokerGame.swift         # ゲームロジック
+│   │   ├── PokerLogic.swift        # ポーカー基本ロジック
+│   │   └── PokerHandEvaluator.swift # ハンド評価ロジック
+│   └── Assets.xcassets         # アセットファイル
 ├── poker-trainer.xcodeproj/    # XCodeプロジェクトファイル
-└── logic-test/                 # テストコード
+├── poker-trainerTests/         # テストコード
+└── logic-test/                 # ロジックテスト
 ```
 
 ## 開発環境のセットアップ
