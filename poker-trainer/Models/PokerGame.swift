@@ -140,9 +140,16 @@ class PokerGame: ObservableObject {
     @Published var selectedConnectTexture: ConnectTexture?
     @Published var selectedPairTexture: PairTexture?
     @Published var selectedHighCardTexture: HighCardTexture?
+    @Published var selectedEquity: Double? // ユーザーが選択した勝率
     @Published var textureMode: Bool = false // テクスチャー判断モードかどうか
     @Published var isCorrect: Bool = false // 正解かどうか
     @Published var showNextButton: Bool = false // 次の問題へボタンを表示するかどうか
+    
+    // 必要勝率判断用の変数
+    @Published var potSize: Double = 5600.0 // ポットサイズ（固定）
+    @Published var betSize: Double = 0.0 // ベットサイズ
+    @Published var requiredEquity: Double = 0.0 // 必要な勝率
+    @Published var equityOptions: [Double] = [0.16, 0.20, 0.25, 0.33, 0.40] // 選択肢
 
     // ランダムなボードを生成
     func startRandomBoard(position: ComboView.Position, boardSize: ComboView.BoardSize) {
@@ -276,12 +283,14 @@ class PokerGame: ObservableObject {
         textureMode = true
         isLoading = false
         feedback = ""
+        showNextButton = false
         
         // 選択をリセット
         selectedSuitTexture = nil
         selectedConnectTexture = nil
         selectedPairTexture = nil
         selectedHighCardTexture = nil
+        selectedEquity = nil
         
         var deck = createDeck()
         hand = Array(deck.prefix(2)) // 最初の2枚を手札
@@ -289,6 +298,25 @@ class PokerGame: ObservableObject {
         
         board = Array(deck.prefix(3)) // 次の3枚をボード
         deck.removeFirst(3)
+        
+        // 必要勝率の計算
+        // ポットサイズは固定
+        potSize = 5600.0
+        
+        // ベットサイズはポットサイズの20%, 33%, 50%, 75%のいずれかに少し揺らぎを持たせる
+        let betSizePercentages = [0.2, 0.33, 0.5, 0.75]
+        let selectedPercentage = betSizePercentages.randomElement() ?? 0.5
+        
+        // 揺らぎを追加（選択した割合の±5%）
+        let variation = Double.random(in: -0.05...0.05)
+        let finalPercentage = selectedPercentage + variation
+        
+        // ベットサイズを計算（小数点以下を切り捨て）
+        betSize = floor(potSize * finalPercentage)
+        betSize = ceil(betSize / 100) * 100
+        
+        // 必要勝率を計算
+        requiredEquity = betSize / (potSize + betSize * 2)
     }
     
     // テクスチャー判断の正解を計算
@@ -354,21 +382,28 @@ class PokerGame: ObservableObject {
         }
     }
     
+    func getCorrectEquity() -> Double {
+        // 最も近い選択肢を正解とする
+        return equityOptions.min(by: { abs($0 - requiredEquity) < abs($1 - requiredEquity) }) ?? 0.0
+    }
+    
     func checkTextureAnswer() -> Bool {
         let correctSuit = getCorrectSuitTexture()
         let correctConnect = getCorrectConnectTexture()
         let correctPair = getCorrectPairTexture()
         let correctHighCard = getCorrectHighCardTexture()
+        let correctEquity = getCorrectEquity()
         
         let isCorrect = selectedSuitTexture == correctSuit &&
                         selectedConnectTexture == correctConnect &&
                         selectedPairTexture == correctPair &&
-                        selectedHighCardTexture == correctHighCard
+                        selectedHighCardTexture == correctHighCard &&
+                        selectedEquity == correctEquity
         
         self.isCorrect = isCorrect
         
         if isCorrect {
-            feedback = "正解！\n\(correctSuit.rawValue), \(correctConnect.rawValue), \(correctPair.rawValue), \(correctHighCard.rawValue)"
+            feedback = "正解！\n\(correctSuit.rawValue), \(correctConnect.rawValue), \(correctPair.rawValue), \(correctHighCard.rawValue), 必要勝率: \(Int(correctEquity * 100))%"
 
             isLoading = true
             DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
@@ -376,7 +411,7 @@ class PokerGame: ObservableObject {
                 self.startTextureGame() // 新しい問題を生成
             }
         } else {
-            feedback = "不正解！\n正解: \(correctSuit.rawValue), \(correctConnect.rawValue), \(correctPair.rawValue), \(correctHighCard.rawValue)"
+            feedback = "不正解！\n正解: \(correctSuit.rawValue), \(correctConnect.rawValue), \(correctPair.rawValue), \(correctHighCard.rawValue), 必要勝率: \(Int(correctEquity * 100))%"
             showNextButton = true // 次の問題へボタンを表示
         }
         
@@ -387,11 +422,6 @@ class PokerGame: ObservableObject {
     func nextTextureQuestion() {
         showNextButton = false
         startTextureGame()
-    }
-    
-    // プリフロップレンジを定義
-    func isHandInRange(_ cards: [Card]) -> Bool {
-        return selectedRange?.contains(cards) ?? false
     }
     
     // 隣接する数字間のギャップを計算する関数
@@ -434,5 +464,10 @@ class PokerGame: ObservableObject {
         }
         
         return .disconnected
+    }
+    
+    // プリフロップレンジを定義
+    func isHandInRange(_ cards: [Card]) -> Bool {
+        return selectedRange?.contains(cards) ?? false
     }
 }

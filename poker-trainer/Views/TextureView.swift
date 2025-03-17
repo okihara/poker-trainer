@@ -38,6 +38,17 @@ struct TextureView: View {
                     }
                 }
                 .padding(.vertical, 20)
+
+                
+                HStack {
+                    Text("ポット: \(Int(game.potSize))")
+                    Spacer()
+                    Text("ベット: \(Int(game.betSize))")
+                }
+                .font(.headline)
+                .padding(.horizontal)
+                .padding(.top, 10)
+
                 
                 if !game.feedback.isEmpty {
                     Text(game.feedback)
@@ -64,7 +75,7 @@ struct TextureView: View {
                 }
                 
                 // テクスチャー判断UI
-                // ScrollView {
+                ScrollView {
                     VStack(alignment: .leading, spacing: 20) {
                         // スートの割合
                         VStack(alignment: .leading) {
@@ -153,9 +164,31 @@ struct TextureView: View {
                                 }
                             }
                         }
+                        
+                        // 必要勝率
+                        VStack(alignment: .leading) {
+                            Text("必要勝率")
+                                .font(.headline)
+                            
+                            HStack {
+                                ForEach(game.equityOptions, id: \.self) { equity in
+                                    Button(action: {
+                                        game.selectedEquity = equity
+                                        checkAllSelected()
+                                    }) {
+                                        Text("\(Int(equity * 100))%")
+                                            .padding(.horizontal, 10)
+                                            .padding(.vertical, 5)
+                                            .background(game.selectedEquity == equity ? Color.blue : Color.gray.opacity(0.3))
+                                            .foregroundColor(game.selectedEquity == equity ? .white : .primary)
+                                            .cornerRadius(8)
+                                    }
+                                }
+                            }
+                        }
                     }
                     .padding()
-                // }
+                }
             }
         }
         .onAppear {
@@ -169,8 +202,10 @@ struct TextureView: View {
         if game.selectedSuitTexture != nil &&
            game.selectedConnectTexture != nil &&
            game.selectedPairTexture != nil &&
-           game.selectedHighCardTexture != nil {
+           game.selectedHighCardTexture != nil &&
+           game.selectedEquity != nil {
             var res = game.checkTextureAnswer()
+            // 必要勝率のチェックは別途行われるため、ここでは何もしない
         }
     }
 }
