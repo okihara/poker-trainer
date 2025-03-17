@@ -112,6 +112,7 @@ class PokerGame: ObservableObject {
 
     enum ConnectTexture: String, CaseIterable, Identifiable {
         case disconnected = "非コネクト"
+        case gutShotDraw = "ガットあり"
         case openEndedDraw = "OESDあり"
         case connected = "コネクト"
         
@@ -142,15 +143,6 @@ class PokerGame: ObservableObject {
     @Published var textureMode: Bool = false // テクスチャー判断モードかどうか
     @Published var isCorrect: Bool = false // 正解かどうか
     @Published var showNextButton: Bool = false // 次の問題へボタンを表示するかどうか
-
-    // 各ポジションのレンジ定義
-    // ...
-
-    // テクスチャー判断用の列挙型
-    // ...
-
-    // テクスチャー判断用の変数
-    // ...
 
     // ランダムなボードを生成
     func startRandomBoard(position: ComboView.Position, boardSize: ComboView.BoardSize) {
@@ -319,8 +311,7 @@ class PokerGame: ObservableObject {
         let ranks = Array(Set(board.map { $0.rank.rawValue })).sorted()
         
         // 通常のケース（Aを14として扱う）
-        let gapsNormal = calculateGaps(ranks: ranks)
-        let result = evaluateConnectedness(gaps: gapsNormal)
+        let result = evaluateConnectedness(ranks: ranks)
         if result != .disconnected {
             return result
         }
@@ -330,8 +321,7 @@ class PokerGame: ObservableObject {
             var modifiedRanks = Array(Set(ranks.filter { $0 != 14 } + [1])) // Aを除外し、Aを1として追加
             modifiedRanks.sort()
             
-            let gapsWithAceAsOne = calculateGaps(ranks: modifiedRanks)
-            let resultWithAceAsOne = evaluateConnectedness(gaps: gapsWithAceAsOne)
+            let resultWithAceAsOne = evaluateConnectedness(ranks: modifiedRanks)
             if resultWithAceAsOne != .disconnected {
                 return resultWithAceAsOne
             }
@@ -415,7 +405,9 @@ class PokerGame: ObservableObject {
     }
     
     // ギャップに基づいてコネクトネスを評価する関数
-    private func evaluateConnectedness(gaps: [Int]) -> ConnectTexture {
+    private func evaluateConnectedness(ranks: [Int]) -> ConnectTexture {
+        let gaps = calculateGaps(ranks: ranks)
+
         // ボードに3枚以上のカードがある場合のみ評価
         if gaps.count >= 2 {
             // 全てのギャップの合計が2以下ならconnected
@@ -427,7 +419,11 @@ class PokerGame: ObservableObject {
             // 隣接する2枚のカードのギャップが2以下ならopenEndedDraw
             for gap in gaps {
                 if gap <= 2 {
-                    return .openEndedDraw
+                    if ranks.contains(14) || ranks.contains(1) {
+                        return .gutShotDraw
+                    } else {
+                        return .openEndedDraw
+                    }
                 }
             }
         } else if gaps.count == 1 {

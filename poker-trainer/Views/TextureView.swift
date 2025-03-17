@@ -64,7 +64,7 @@ struct TextureView: View {
                 }
                 
                 // テクスチャー判断UI
-                ScrollView {
+                // ScrollView {
                     VStack(alignment: .leading, spacing: 20) {
                         // スートの割合
                         VStack(alignment: .leading) {
@@ -155,7 +155,7 @@ struct TextureView: View {
                         }
                     }
                     .padding()
-                }
+                // }
             }
         }
         .onAppear {
