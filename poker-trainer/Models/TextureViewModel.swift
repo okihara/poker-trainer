@@ -235,19 +235,25 @@ class TextureViewModel: ObservableObject {
                 return .connected
             }
             
+            var ret: ConnectTexture = .gutShotDraw
             // 隣接する2枚のカードのギャップが2以下ならopenEndedDraw
-            for gap in gaps {
+            for (i, gap) in gaps.enumerated() {
                 if gap <= 2 {
-                    if ranks.contains(14) || ranks.contains(1) {
-                        return .gutShotDraw
-                    } else {
-                        return .openEndedDraw
+                    if i == 0 && ranks[0] != 1 {
+                        ret = .openEndedDraw
+                    }
+                    if i == 1 && ranks[2] != 14 {
+                        ret = .openEndedDraw
                     }
                 }
             }
+            return ret
         } else if gaps.count == 1 {
             // ボードに2枚のカードしかない場合
             if gaps[0] <= 2 {
+                if ranks.contains(14) || ranks.contains(1) {
+                    return .gutShotDraw
+                }
                 return .openEndedDraw
             }
         }
