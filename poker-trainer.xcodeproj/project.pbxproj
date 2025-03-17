@@ -11,6 +11,7 @@
 		4414EC832D87216900B61011 /* OutsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4414EC822D87216900B61011 /* OutsView.swift */; };
 		4414EC852D87220A00B61011 /* PokerGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4487533A2D512D3B00FF4112 /* PokerGame.swift */; };
 		4414EC872D8723FC00B61011 /* TextureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4414EC862D8723FC00B61011 /* TextureView.swift */; };
+		4456F1092D886D9A00B9443E /* TextureViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4456F1082D886D9A00B9443E /* TextureViewModel.swift */; };
 		446D9F572D487DE200F6B343 /* test2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 446D9F562D487DE200F6B343 /* test2.swift */; };
 		446D9F5C2D487E4F00F6B343 /* PokerHnadEvaluatar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44CEEF442D46625C00BE5132 /* PokerHnadEvaluatar.swift */; };
 		446D9F5E2D49344A00F6B343 /* ComboView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 446D9F5D2D49344A00F6B343 /* ComboView.swift */; };
@@ -29,6 +30,7 @@
 		4411D2932D5B387E009B4FAE /* PotOddsTrainerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PotOddsTrainerView.swift; sourceTree = "<group>"; };
 		4414EC822D87216900B61011 /* OutsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutsView.swift; sourceTree = "<group>"; };
 		4414EC862D8723FC00B61011 /* TextureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextureView.swift; sourceTree = "<group>"; };
+		4456F1082D886D9A00B9443E /* TextureViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextureViewModel.swift; sourceTree = "<group>"; };
 		446D9F542D487DE200F6B343 /* test2.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = test2.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		446D9F562D487DE200F6B343 /* test2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = test2.swift; sourceTree = "<group>"; };
 		446D9F5D2D49344A00F6B343 /* ComboView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComboView.swift; sourceTree = "<group>"; };
@@ -81,6 +83,7 @@
 				447265502D53C99200D7E4FE /* PokerLogic.swift */,
 				4487533A2D512D3B00FF4112 /* PokerGame.swift */,
 				44CEEF442D46625C00BE5132 /* PokerHnadEvaluatar.swift */,
+				4456F1082D886D9A00B9443E /* TextureViewModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -249,6 +252,7 @@
 				44EC93DD2D40914B0025E01B /* ContentView.swift in Sources */,
 				4414EC872D8723FC00B61011 /* TextureView.swift in Sources */,
 				4487533B2D512D3C00FF4112 /* PokerGame.swift in Sources */,
+				4456F1092D886D9A00B9443E /* TextureViewModel.swift in Sources */,
 				44EC93DB2D40914B0025E01B /* poker_trainerApp.swift in Sources */,
 				446D9F622D4F833F00F6B343 /* ChatView.swift in Sources */,
 			);

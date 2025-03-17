@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct TextureView: View {
-    @StateObject private var game = PokerGame()
+    @StateObject private var game = TextureViewModel()
     
     var body: some View {
         VStack {
@@ -83,7 +83,7 @@ struct TextureView: View {
                                 .font(.headline)
                             
                             HStack {
-                                ForEach(PokerGame.SuitTexture.allCases) { texture in
+                                ForEach(TextureViewModel.SuitTexture.allCases) { texture in
                                     Button(action: {
                                         game.selectedSuitTexture = texture
                                         checkAllSelected()
@@ -105,7 +105,7 @@ struct TextureView: View {
                                 .font(.headline)
                             
                             HStack {
-                                ForEach(PokerGame.ConnectTexture.allCases) { texture in
+                                ForEach(TextureViewModel.ConnectTexture.allCases) { texture in
                                     Button(action: {
                                         game.selectedConnectTexture = texture
                                         checkAllSelected()
@@ -127,7 +127,7 @@ struct TextureView: View {
                                 .font(.headline)
                             
                             HStack {
-                                ForEach(PokerGame.PairTexture.allCases) { texture in
+                                ForEach(TextureViewModel.PairTexture.allCases) { texture in
                                     Button(action: {
                                         game.selectedPairTexture = texture
                                         checkAllSelected()
@@ -149,7 +149,7 @@ struct TextureView: View {
                                 .font(.headline)
                             
                             HStack {
-                                ForEach(PokerGame.HighCardTexture.allCases) { texture in
+                                ForEach(TextureViewModel.HighCardTexture.allCases) { texture in
                                     Button(action: {
                                         game.selectedHighCardTexture = texture
                                         checkAllSelected()
@@ -204,12 +204,7 @@ struct TextureView: View {
            game.selectedPairTexture != nil &&
            game.selectedHighCardTexture != nil &&
            game.selectedEquity != nil {
-            var res = game.checkTextureAnswer()
-            // 必要勝率のチェックは別途行われるため、ここでは何もしない
+            game.checkTextureAnswer()
         }
     }
-}
-
-#Preview {
-    TextureView()
 }
