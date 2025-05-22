@@ -37,7 +37,9 @@ struct PotOddsTrainerView: View {
     @State private var bettingPosition: Position = .co
     
     private var correctPotOdds: Double {
-        let totalPot = potSize + betSize
+        // Call amount is equal to the betSize, so the total pot after calling
+        // includes our call as well.
+        let totalPot = potSize + betSize * 2
         return (betSize / totalPot) * 100
     }
     

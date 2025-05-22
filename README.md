@@ -34,7 +34,6 @@ poker-trainer/
 │   │   └── PokerHandEvaluator.swift # ハンド評価ロジック
 │   └── Assets.xcassets         # アセットファイル
 ├── poker-trainer.xcodeproj/    # XCodeプロジェクトファイル
-├── poker-trainerTests/         # テストコード
 └── logic-test/                 # ロジックテスト
 ```
 
