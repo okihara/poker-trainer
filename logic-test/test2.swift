@@ -206,4 +206,34 @@ final class test2: XCTestCase {
         XCTAssertEqual(result.ranks[0], .jack)
         XCTAssertEqual(result.ranks[1], .five)
     }
+
+    // ストレートとフラッシュが別スートで存在する場合はフラッシュ扱いとなるかテスト
+    func testFlushNotStraightFlush() throws {
+        let cards = [
+            Card(rank: .ace, suit: .hearts),
+            Card(rank: .king, suit: .hearts),
+            Card(rank: .queen, suit: .hearts),
+            Card(rank: .jack, suit: .hearts),
+            Card(rank: .ten, suit: .diamonds),
+            Card(rank: .three, suit: .hearts),
+            Card(rank: .two, suit: .clubs)
+        ]
+        let result = PokerHandEvaluator().evaluateHand(cards: cards)
+        XCTAssertEqual(result.rankType, .flush)
+    }
+
+    // 正しいストレートフラッシュ判定のテスト
+    func testStraightFlush() throws {
+        let cards = [
+            Card(rank: .ace, suit: .hearts),
+            Card(rank: .king, suit: .hearts),
+            Card(rank: .queen, suit: .hearts),
+            Card(rank: .jack, suit: .hearts),
+            Card(rank: .ten, suit: .hearts),
+            Card(rank: .two, suit: .clubs),
+            Card(rank: .three, suit: .diamonds)
+        ]
+        let result = PokerHandEvaluator().evaluateHand(cards: cards)
+        XCTAssertEqual(result.rankType, .royalFlush)
+    }
 }
