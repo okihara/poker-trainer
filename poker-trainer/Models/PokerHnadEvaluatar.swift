@@ -182,11 +182,13 @@ class PokerHandEvaluator {
         let isFlush = checkFlush(cards: sortedCards)
         let straightHighCard = checkStraight(cards: sortedCards)
 
-        if isFlush && straightHighCard != nil {
-            if straightHighCard == 14 {
-                return HandRank(rankType: .royalFlush, ranks: sortedCards.map { $0.rank })
+        // ストレートフラッシュ/ロイヤルフラッシュの判定を強化
+        if let sfHighCard = checkStraightFlush(cards: sortedCards) {
+            let ranks = straightRanks(highCard: sfHighCard)
+            if sfHighCard == 14 {
+                return HandRank(rankType: .royalFlush, ranks: ranks)
             } else {
-                return HandRank(rankType: .straightFlush, ranks: sortedCards.map { $0.rank })
+                return HandRank(rankType: .straightFlush, ranks: ranks)
             }
         } else if let fourOfAKindRanks = checkFourOfAKind(cards: sortedCards) {
             return HandRank(rankType: .fourOfAKind, ranks: fourOfAKindRanks)
@@ -331,6 +333,25 @@ class PokerHandEvaluator {
         }
         
         return nil
+    }
+
+    // 特定のスート内でストレートが完成しているか確認
+    private func checkStraightFlush(cards: [Card]) -> Int? {
+        let suitGroups = Dictionary(grouping: cards, by: { $0.suit })
+        for suitCards in suitGroups.values where suitCards.count >= 5 {
+            if let high = checkStraight(cards: suitCards) {
+                return high
+            }
+        }
+        return nil
+    }
+
+    // ストレートの最高カードから5枚のランクを生成
+    private func straightRanks(highCard: Int) -> [Rank] {
+        if highCard == 5 {
+            return [.five, .four, .three, .two, .ace]
+        }
+        return (0..<5).compactMap { Rank(rawValue: highCard - $0) }
     }
 
    private func checkFourOfAKind(cards: [Card]) -> [Rank]? {
