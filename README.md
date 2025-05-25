@@ -7,6 +7,7 @@
 - ポットオッズトレーニング機能
 - ハンドコンボの表示と学習機能
 - アウツ計算機能
+- コール判断トレーニング機能
 - チャット機能
 - ポーカーゲームのシミュレーション
 
@@ -27,6 +28,7 @@ poker-trainer/
 │   │   ├── PotOddsTrainerView.swift # ポットオッズトレーニング機能
 │   │   ├── ComboView.swift         # ハンドコンボ表示機能
 │   │   ├── OutsView.swift          # アウツ計算機能
+│   │   ├── CallDecisionTrainerView.swift # コール判断トレーニング機能
 │   │   └── ChatView.swift          # チャット機能
 │   ├── Models/                 # モデル・ロジック関連ファイル
 │   │   ├── PokerGame.swift         # ゲームロジック

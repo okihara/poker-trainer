@@ -12,12 +12,17 @@ struct ContentView: View {
                 .tabItem {
                     Label("アウツ練習", systemImage: "gamecontroller")
                 }
-            
+
             TextureView()
                 .tabItem {
                     Label("フロップ", systemImage: "percent")
                 }
-            
+
+            CallDecisionTrainerView()
+                .tabItem {
+                    Label("コール練習", systemImage: "hand.raised")
+                }
+
             ChatView()
                 .tabItem {
                     Label("チャット風", systemImage: "gamecontroller")
