@@ -12,7 +12,7 @@
 		4414EC852D87220A00B61011 /* PokerGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4487533A2D512D3B00FF4112 /* PokerGame.swift */; };
 		4414EC872D8723FC00B61011 /* TextureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4414EC862D8723FC00B61011 /* TextureView.swift */; };
 		4456F1092D886D9A00B9443E /* TextureViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4456F1082D886D9A00B9443E /* TextureViewModel.swift */; };
-		446D9F572D487DE200F6B343 /* test2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 446D9F562D487DE200F6B343 /* test2.swift */; };
+		446D9F572D487DE200F6B343 /* logic-test.swift in Sources */ = {isa = PBXBuildFile; fileRef = 446D9F562D487DE200F6B343 /* logic-test.swift */; };
 		446D9F5C2D487E4F00F6B343 /* PokerHnadEvaluatar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44CEEF442D46625C00BE5132 /* PokerHnadEvaluatar.swift */; };
 		446D9F5E2D49344A00F6B343 /* ComboView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 446D9F5D2D49344A00F6B343 /* ComboView.swift */; };
 		446D9F622D4F833F00F6B343 /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 446D9F612D4F833F00F6B343 /* ChatView.swift */; };
@@ -32,7 +32,7 @@
 		4414EC862D8723FC00B61011 /* TextureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextureView.swift; sourceTree = "<group>"; };
 		4456F1082D886D9A00B9443E /* TextureViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextureViewModel.swift; sourceTree = "<group>"; };
 		446D9F542D487DE200F6B343 /* test2.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = test2.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		446D9F562D487DE200F6B343 /* test2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = test2.swift; sourceTree = "<group>"; };
+		446D9F562D487DE200F6B343 /* logic-test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "logic-test.swift"; sourceTree = "<group>"; };
 		446D9F5D2D49344A00F6B343 /* ComboView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComboView.swift; sourceTree = "<group>"; };
 		446D9F612D4F833F00F6B343 /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
 		447265502D53C99200D7E4FE /* PokerLogic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PokerLogic.swift; sourceTree = "<group>"; };
@@ -91,7 +91,8 @@
 		446D9F552D487DE200F6B343 /* logic-test */ = {
 			isa = PBXGroup;
 			children = (
-				446D9F562D487DE200F6B343 /* test2.swift */,
+				4473D5CF2D54EA28006D9C0C /* test2.xctestplan */,
+				446D9F562D487DE200F6B343 /* logic-test.swift */,
 			);
 			path = "logic-test";
 			sourceTree = "<group>";
@@ -99,7 +100,6 @@
 		44EC93CE2D40914B0025E01B = {
 			isa = PBXGroup;
 			children = (
-				4473D5CF2D54EA28006D9C0C /* test2.xctestplan */,
 				44EC93D92D40914B0025E01B /* poker-trainer */,
 				446D9F552D487DE200F6B343 /* logic-test */,
 				44EC93D82D40914B0025E01B /* Products */,
@@ -235,7 +235,7 @@
 			files = (
 				446D9F5C2D487E4F00F6B343 /* PokerHnadEvaluatar.swift in Sources */,
 				4414EC852D87220A00B61011 /* PokerGame.swift in Sources */,
-				446D9F572D487DE200F6B343 /* test2.swift in Sources */,
+				446D9F572D487DE200F6B343 /* logic-test.swift in Sources */,
 				447265522D53C99200D7E4FE /* PokerLogic.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

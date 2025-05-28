@@ -206,4 +206,58 @@ final class test2: XCTestCase {
         XCTAssertEqual(result.ranks[0], .jack)
         XCTAssertEqual(result.ranks[1], .five)
     }
+    
+    func testStraightFlush() throws {
+        let hand = [
+            Card(rank: .six, suit: .hearts),
+            Card(rank: .seven, suit: .hearts)
+        ]
+        let board = [
+            Card(rank: .eight, suit: .hearts),
+            Card(rank: .nine, suit: .hearts),
+            Card(rank: .ten, suit: .hearts),
+            Card(rank: .two, suit: .diamonds),
+            Card(rank: .three, suit: .clubs)
+        ]
+        
+        let result = PokerHandEvaluator().evaluateHand(cards: hand + board)
+        XCTAssertEqual(result.rankType, .straightFlush, "6♥7♥ + 8♥9♥10♥2♦3♣ はストレートフラッシュになるはずです")
+        XCTAssertEqual(result.ranks[0], .ten, "ストレートフラッシュの最高ランクは10になるはずです")
+    }
+    
+    func testRoyalFlush() throws {
+        let hand = [
+            Card(rank: .ace, suit: .spades),
+            Card(rank: .king, suit: .spades)
+        ]
+        let board = [
+            Card(rank: .queen, suit: .spades),
+            Card(rank: .jack, suit: .spades),
+            Card(rank: .ten, suit: .spades),
+            Card(rank: .two, suit: .diamonds),
+            Card(rank: .three, suit: .clubs)
+        ]
+        
+        let result = PokerHandEvaluator().evaluateHand(cards: hand + board)
+        XCTAssertEqual(result.rankType, .royalFlush, "A♠K♠ + Q♠J♠10♠2♦3♣ はロイヤルフラッシュになるはずです")
+    }
+    
+    func testLowStraight() throws {
+        let hand = [
+            Card(rank: .ace, suit: .hearts),
+            Card(rank: .two, suit: .diamonds)
+        ]
+        let board = [
+            Card(rank: .three, suit: .spades),
+            Card(rank: .four, suit: .clubs),
+            Card(rank: .five, suit: .hearts),
+            Card(rank: .king, suit: .spades),
+            Card(rank: .queen, suit: .clubs)
+        ]
+        
+        let result = PokerHandEvaluator().evaluateHand(cards: hand + board)
+        XCTAssertEqual(result.rankType, .straight, "A♥2♦ + 3♠4♣5♥K♠Q♣ はストレート（A-5）になるはずです")
+        XCTAssertEqual(result.ranks[0], .five, "A-5ストレートの最高ランクは5になるはずです")
+        XCTAssertEqual(result.ranks[4], .ace, "A-5ストレートの最低ランクはAになるはずです（Aは1として扱われる）")
+    }
 }
