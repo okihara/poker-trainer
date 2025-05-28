@@ -102,20 +102,20 @@ class PokerGame: ObservableObject {
     )
 
     // ランダムなボードを生成
-    func startRandomBoard(position: ComboView.Position, boardSize: ComboView.BoardSize) {
+    func startRandomBoard(position: PokerLogic.Position, boardSize: PokerLogic.BoardSize) {
         // 既存のカードをクリア
         hand.removeAll()
         board.removeAll()
         
         // ポジションに応じたレンジを設定
         switch position {
-        case .utgVsBtn:
+        case PokerLogic.Position.utgVsBtn:
             opponentRange = utgRange  // UTGのレンジからランダムなハンドを生成
             selectedRange = btnRange  // BTNのレンジから選択する
-        case .utgVsBb:
+        case PokerLogic.Position.utgVsBb:
             opponentRange = utgRange  // UTGのレンジからランダムなハンドを生成
             selectedRange = bbRange   // BBのレンジから選択する
-        case .btnVsBb:
+        case PokerLogic.Position.btnVsBb:
             opponentRange = btnRange  // BTNのレンジからランダムなハンドを生成
             selectedRange = bbRange   // BBのレンジから選択する
         }

@@ -20,8 +20,8 @@ struct ComboView: View {
     @State private var missedHands: Set<UUID> = []
     @State private var correctHands: Set<UUID> = []
     @State private var isPocketPairsSelected: Bool = false
-    @State private var selectedPosition: Position = .utgVsBtn
-    @State private var selectedBoardSize: BoardSize = .random
+    @State private var selectedPosition: PokerLogic.Position = .utgVsBtn
+    @State private var selectedBoardSize: PokerLogic.BoardSize = .random
 
     private let handGrid = PokerLogic.generateHandGrid()
 
@@ -29,27 +29,6 @@ struct ComboView: View {
         case winning, losing
     }
 
-    enum Position: String, CaseIterable {
-        case utgVsBtn = "UTG vs BTN"
-        case utgVsBb = "UTG vs BB"
-        case btnVsBb = "BTN vs BB"
-    }
-
-    enum BoardSize: String, CaseIterable {
-        case three = "フロップ"
-        case four = "ターン"
-        case five = "リバー"
-        case random = "ランダム"
-
-        var cardCount: Int {
-            switch self {
-            case .three: return 3
-            case .four: return 4
-            case .five: return 5
-            case .random: return Int.random(in: 3...5)
-            }
-        }
-    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -63,7 +42,7 @@ struct ComboView: View {
                 .padding(.horizontal)
 
                 Picker("Board Size", selection: $selectedBoardSize) {
-                    ForEach(BoardSize.allCases, id: \.self) { size in
+                    ForEach(PokerLogic.BoardSize.allCases, id: \.self) { size in
                         Text(size.rawValue).tag(size)
                     }
                 }

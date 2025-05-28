@@ -28,6 +28,28 @@ enum HandType {
 }
 
 class PokerLogic {
+    enum Position: String, CaseIterable {
+        case utgVsBtn = "UTG vs BTN"
+        case utgVsBb = "UTG vs BB"
+        case btnVsBb = "BTN vs BB"
+    }
+    
+    enum BoardSize: String, CaseIterable {
+        case three = "フロップ"
+        case four = "ターン"
+        case five = "リバー"
+        case random = "ランダム"
+
+        var cardCount: Int {
+            switch self {
+            case .three: return 3
+            case .four: return 4
+            case .five: return 5
+            case .random: return Int.random(in: 3...5)
+            }
+        }
+    }
+    
     // デモ用のハンドデータを生成
     static func generateHandGrid() -> [[Hand]] {
         let ranks = ["A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2"]

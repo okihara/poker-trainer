@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1500"
+   LastUpgradeVersion = "1630"
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -59,6 +59,17 @@
                BlueprintIdentifier = "446D9F462D487D9D00F6B343"
                BuildableName = "poker-trainerTests2.xctest"
                BlueprintName = "poker-trainerTests2"
+               ReferencedContainer = "container:poker-trainer.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "44B3A6282DE6E6EB0037CA29"
+               BuildableName = "LogicTest.xctest"
+               BlueprintName = "LogicTest"
                ReferencedContainer = "container:poker-trainer.xcodeproj">
             </BuildableReference>
          </TestableReference>
