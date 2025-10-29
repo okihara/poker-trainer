@@ -7,50 +7,88 @@
 
 import SwiftUI
 
-
 struct ComboView: View {
     @StateObject private var game = PokerGame()
-    @State private var selectedHands: [Hand] = []
+    @State private var selectedCombos: [CardCombo] = []
+    @State private var pendingCards: [Card] = []
     @State private var mode: Mode = .losing
     @State private var isInitialized: Bool = false
     @State private var resultMessage: String = ""
     @State private var hasAnswered: Bool = false
     @State private var isCorrect: Bool = false
     @State private var showResultAnimation: Bool = false
-    @State private var missedHands: Set<UUID> = []
-    @State private var correctHands: Set<UUID> = []
-    @State private var isPocketPairsSelected: Bool = false
+    @State private var missedCombos: Set<CardCombo> = []
+    @State private var correctCombos: Set<CardCombo> = []
     @State private var selectedPosition: PokerLogic.Position = .utgVsBtn
     @State private var selectedBoardSize: PokerLogic.BoardSize = .random
 
     private let handGrid = PokerLogic.generateHandGrid()
 
-    enum Mode {
-        case winning, losing
-    }
+    enum Mode: String, CaseIterable {
+        case winning = "勝っているハンド"
+        case losing = "負けているハンド"
 
+        var title: String { rawValue }
+    }
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack {
-                Picker("Position", selection: $selectedPosition) {
-                    ForEach(Position.allCases, id: \.self) { position in
-                        Text(position.rawValue).tag(position)
-                    }
-                }
-                .pickerStyle(.menu)
-                .padding(.horizontal)
+            headerPickers
+            boardSection
+            modePicker
 
-                Picker("Board Size", selection: $selectedBoardSize) {
-                    ForEach(PokerLogic.BoardSize.allCases, id: \.self) { size in
-                        Text(size.rawValue).tag(size)
-                    }
+            if !resultMessage.isEmpty {
+                resultSection
+            }
+
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    selectionControlSection
+                    selectedComboSection
+                    cardPickerSection
                 }
-                .pickerStyle(.menu)
                 .padding(.horizontal)
             }
-            .padding(.top, 8)
-            
+
+            actionButtons
+        }
+        .onAppear {
+            if !isInitialized {
+                isInitialized = true
+                startNewProblem(position: selectedPosition, boardSize: selectedBoardSize)
+            }
+        }
+        .onChange(of: selectedPosition) { newValue in
+            startNewProblem(position: newValue, boardSize: selectedBoardSize)
+        }
+        .onChange(of: selectedBoardSize) { newValue in
+            startNewProblem(position: selectedPosition, boardSize: newValue)
+        }
+    }
+
+    private var headerPickers: some View {
+        HStack {
+            Picker("Position", selection: $selectedPosition) {
+                ForEach(PokerLogic.Position.allCases, id: \.self) { position in
+                    Text(position.rawValue).tag(position)
+                }
+            }
+            .pickerStyle(.menu)
+            .padding(.horizontal)
+
+            Picker("Board Size", selection: $selectedBoardSize) {
+                ForEach(PokerLogic.BoardSize.allCases, id: \.self) { size in
+                    Text(size.rawValue).tag(size)
+                }
+            }
+            .pickerStyle(.menu)
+            .padding(.horizontal)
+        }
+        .padding(.top, 8)
+    }
+
+    private var boardSection: some View {
+        VStack(spacing: 8) {
             HStack {
                 ForEach(game.board, id: \.self) { card in
                     Image(card.imageName)
@@ -58,8 +96,8 @@ struct ComboView: View {
                         .frame(width: 42, height: 66)
                         .shadow(radius: 4)
                 }
-            }.padding(.top, 8)
-            
+            }
+
             HStack {
                 ForEach(game.hand, id: \.self) { card in
                     Image(card.imageName)
@@ -68,264 +106,361 @@ struct ComboView: View {
                         .shadow(radius: 4)
                 }
             }
-            .padding(.vertical, 8)
+        }
+        .padding(.vertical, 8)
+    }
 
-            
-            // 結果メッセージの表示
-            if !resultMessage.isEmpty {
-                HStack(spacing: 8) {
-                    Image(systemName: isCorrect ? "checkmark.circle.fill" : "xmark.circle.fill")
-                        .font(.system(size: 60))
-                        .foregroundColor(isCorrect ? .green : .red)
-                        .scaleEffect(showResultAnimation ? 1.0 : 0.1)
-                        .animation(.spring(response: 0.3, dampingFraction: 0.5), value: showResultAnimation)
-                    Text(resultMessage)
-                        .font(.headline)
-                        .foregroundColor(isCorrect ? .green : .red)
-                        .padding(.bottom, 8)
-                        .opacity(showResultAnimation ? 1.0 : 0.0)
-                        .animation(.easeIn(duration: 0.2).delay(0.3), value: showResultAnimation)
-                }
-                .padding(.vertical, 4)
+    private var modePicker: some View {
+        Picker("Mode", selection: $mode) {
+            ForEach(Mode.allCases, id: \.self) { value in
+                Text(value.title).tag(value)
             }
-            
-            Spacer() // Push all content to the top
-            
-            // モード切り替えボタンと回答/次へボタン
-            HStack(spacing: 12) {
-                Button(action: selectAllPocketPairs) {
-                    Text(isPocketPairsSelected ? "ポケットペア解除" : "ポケットペア全選択")
+        }
+        .pickerStyle(.segmented)
+        .padding(.horizontal)
+        .padding(.bottom, 8)
+    }
+
+    private var resultSection: some View {
+        HStack(spacing: 8) {
+            Image(systemName: isCorrect ? "checkmark.circle.fill" : "xmark.circle.fill")
+                .font(.system(size: 60))
+                .foregroundColor(isCorrect ? .green : .red)
+                .scaleEffect(showResultAnimation ? 1.0 : 0.1)
+                .animation(.spring(response: 0.3, dampingFraction: 0.5), value: showResultAnimation)
+            Text(resultMessage)
+                .font(.headline)
+                .foregroundColor(isCorrect ? .green : .red)
+                .padding(.bottom, 8)
+                .opacity(showResultAnimation ? 1.0 : 0.0)
+                .animation(.easeIn(duration: 0.2).delay(0.3), value: showResultAnimation)
+        }
+        .padding(.vertical, 4)
+    }
+
+    private var actionButtons: some View {
+        HStack(spacing: 12) {
+            Spacer()
+
+            if !hasAnswered {
+                Button(action: {
+                    checkAnswer()
+                }) {
+                    Text("回答")
                         .font(.system(size: 16, weight: .bold))
-                        .padding(.horizontal, 16)
+                        .padding(.horizontal, 32)
                         .padding(.vertical, 10)
-                        .background(hasAnswered ? Color.gray : Color.blue)
+                        .background(selectedCombos.isEmpty ? Color.gray : Color.blue)
                         .foregroundColor(.white)
                         .cornerRadius(12)
                 }
-                .disabled(hasAnswered)  // 回答済みの場合は無効化
-                
-                Spacer() // Push buttons to the right
-                
-                if !hasAnswered {
-                    Button(action: {
-                        checkAnswer()
-                        hasAnswered = true // 回答済みにする
-                    }) {
-                        Text("回答")
-                            .font(.system(size: 16, weight: .bold))
-                            .padding(.horizontal, 32)
-                            .padding(.vertical, 10)
-                            .background(Color.blue)
-                            .foregroundColor(.white)
-                            .cornerRadius(12)
-                    }
-                } else {
-                    Button(action: {
-                        nextProblem()
-                    }) {
-                        Text("次へ")
-                            .font(.system(size: 16, weight: .bold))
-                            .padding(.horizontal, 32)
-                            .padding(.vertical, 10)
-                            .background(Color.blue)
-                            .foregroundColor(.white)
-                            .cornerRadius(12)
-                    }
+                .disabled(selectedCombos.isEmpty)
+            } else {
+                Button(action: {
+                    nextProblem()
+                }) {
+                    Text("次へ")
+                        .font(.system(size: 16, weight: .bold))
+                        .padding(.horizontal, 32)
+                        .padding(.vertical, 10)
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(12)
                 }
             }
-            .padding(.horizontal, 8)
-            .padding(.bottom, 8)
+        }
+        .padding(.horizontal, 8)
+        .padding(.vertical, 12)
+    }
 
-            // グリッド表示
-            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 0), count: 13), spacing: 1) {
-                ForEach(handGrid.flatMap { $0 }) { hand in
-                    HandCell(
-                        hand: hand,
-                        isSelected: selectedHands.contains(where: { $0.id == hand.id }),
-                        isMissed: missedHands.contains(hand.id),
-                        hasAnswered: hasAnswered,
-                        isCorrectHand: correctHands.contains(hand.id),
-                        isInRange: game.isHandInRange(hand.dummyCards)
-                    )
-                    .onTapGesture {
-                        if !hasAnswered {
-                            toggleHandSelection(hand)
+    private var selectionControlSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("カードを2枚選択してコンボを追加")
+                .font(.headline)
+
+            HStack(spacing: 12) {
+                HStack {
+                    if pendingCards.isEmpty {
+                        Text("未選択")
+                            .foregroundColor(.secondary)
+                    } else {
+                        ForEach(pendingCards, id: \.self) { card in
+                            Text(card.str)
+                                .font(.system(size: 18, weight: .bold))
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
+                                .background(Color.blue.opacity(0.2))
+                                .cornerRadius(8)
                         }
                     }
                 }
-            }
-            .padding(.horizontal, 0)
-            .padding(.bottom, 16)
 
-        }
-        .onAppear {
-            if !isInitialized {
-                isInitialized = true
-                game.startRandomBoard(position: selectedPosition, boardSize: selectedBoardSize)
+                Spacer()
+
+                Button("クリア") {
+                    pendingCards.removeAll()
+                }
+                .disabled(pendingCards.isEmpty || hasAnswered)
+
+                Button("追加") {
+                    addPendingCombo()
+                }
+                .disabled(pendingCards.count < 2 || hasAnswered)
+                .buttonStyle(.borderedProminent)
             }
         }
     }
-    
-    // 回答ボタンのアクション
+
+    private var selectedComboSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("選択したコンボ")
+                .font(.headline)
+
+            if selectedCombos.isEmpty {
+                Text("まだコンボが追加されていません")
+                    .foregroundColor(.secondary)
+            } else {
+                VStack(alignment: .leading, spacing: 8) {
+                    ForEach(selectedCombos) { combo in
+                        let isCorrectCombo = correctCombos.contains(combo)
+                        let backgroundColor: Color
+                        if hasAnswered {
+                            backgroundColor = isCorrectCombo ? Color.green.opacity(0.2) : Color.red.opacity(0.2)
+                        } else {
+                            backgroundColor = Color.gray.opacity(0.15)
+                        }
+
+                        HStack {
+                            Text("\(combo.displayText) (\(combo.handName))")
+                                .font(.system(size: 16, weight: .semibold))
+                            Spacer()
+                            if hasAnswered {
+                                Image(systemName: isCorrectCombo ? "checkmark.circle.fill" : "xmark.circle.fill")
+                                    .foregroundColor(isCorrectCombo ? .green : .red)
+                            } else {
+                                Button(action: {
+                                    removeCombo(combo)
+                                }) {
+                                    Image(systemName: "trash")
+                                        .foregroundColor(.red)
+                                }
+                            }
+                        }
+                        .padding(8)
+                        .background(backgroundColor)
+                        .cornerRadius(8)
+                    }
+                }
+            }
+
+            if hasAnswered && !missedCombos.isEmpty {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("未選択の正解コンボ")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+
+                    ForEach(sortedCombos(Array(missedCombos)), id: \.id) { combo in
+                        Text("\(combo.displayText) (\(combo.handName))")
+                            .padding(.vertical, 2)
+                    }
+                }
+                .padding(.top, 4)
+            }
+        }
+    }
+
+    private var cardPickerSection: some View {
+        let unavailableCards = Set(game.board + game.hand)
+        let ranks: [Rank] = [.ace, .king, .queen, .jack, .ten, .nine, .eight, .seven, .six, .five, .four, .three, .two]
+        let suits: [Suit] = [.spades, .hearts, .diamonds, .clubs]
+
+        return VStack(alignment: .leading, spacing: 8) {
+            Text("カード一覧")
+                .font(.headline)
+
+            ForEach(suits, id: \.self) { suit in
+                HStack(spacing: 4) {
+                    ForEach(ranks, id: \.self) { rank in
+                        let card = Card(rank: rank, suit: suit)
+                        CardSelectionButton(
+                            card: card,
+                            isSelected: pendingCards.contains(card),
+                            isDisabled: hasAnswered || unavailableCards.contains(card),
+                            isInAnyCombo: selectedCombos.contains(where: { $0.cards.contains(card) }),
+                            action: {
+                                handleCardTap(card)
+                            }
+                        )
+                    }
+                }
+            }
+        }
+    }
+
     private func checkAnswer() {
-        // プレイヤーの手札の最高ランクを評価
         let myBestHandRank = game.evaluator.evaluateHand(cards: game.hand + game.board)
-        
-        // すべての可能なハンドの組み合わせを取得
         let allHands = handGrid.flatMap { $0 }
-        var rangeHands: [Hand] = []
-        // すでに使用されているカードを記録
         let usedCards = Set(game.board + game.hand)
-        
-        // 各ハンドについて、実現可能な組み合わせを確認
+
+        var rangeCombos: [CardCombo] = []
+
         for hand in allHands {
             let possibleCombos = PokerLogic.generateAllPossibleCombos(for: hand, usedCards: usedCards)
-            // 実現可能な組み合わせがあり、かつレンジ内に含まれる場合
-            if !possibleCombos.isEmpty && possibleCombos.contains(where: { combo in
+            let combosInRange = possibleCombos.filter { combo in
                 game.isHandInRange(combo)
-            }) {
-                print("hand: \(hand.name)")
-                print("possibleCombos: \(possibleCombos.map { "\($0[0].str)\($0[1].str)" })")
-                rangeHands.append(hand)
             }
-        }
-        print("rangeHands: \(rangeHands.map { $0.name })")
-        
-        // レンジ内のハンドから、モードに応じて勝ち/負けのコンボを抽出
-        let correctHandArray = rangeHands.filter { hand in
-            let possibleCombos = PokerLogic.generateAllPossibleCombos(for: hand, usedCards: usedCards)
-            return possibleCombos.contains { combo in
-                let rank = game.evaluator.evaluateHand(cards: combo + game.board)
-                print("rank: \(rank)")
-                print("combo \(combo.map { $0.str })")
-                // losingモードの場合は自分より強い手、winningモードの場合は自分より弱い手を探す
-                return mode == .losing ? rank > myBestHandRank : rank < myBestHandRank
-            }
-        }
-        
-        // 正解のハンドをセットとして保存
-        correctHands = Set(correctHandArray.map { $0.id })
-        
-        // 選択されたハンドと正解のハンドを名前でセット化
-        let selectedHandsSet = Set(selectedHands.map { $0.name })
-        let correctHandsNameSet = Set(correctHandArray.map { $0.name })
-        
-        // 見逃した（選択されなかった）正解のハンドを記録
-        missedHands = Set(correctHandArray.filter { !selectedHandsSet.contains($0.name) }.map { $0.id })
-        
-        // 選択したハンドと正解のハンドが完全に一致するか確認
-        isCorrect = selectedHandsSet == correctHandsNameSet
-
-        // 正解のコンボ数を計算
-        let correctComboCount = correctHandArray.reduce(0) { count, hand in
-            let possibleCombos = PokerLogic.generateAllPossibleCombos(for: hand, usedCards: usedCards)
-            return count + possibleCombos.filter { combo in
-                let rank = game.evaluator.evaluateHand(cards: combo + game.board)
-                return mode == .losing ? rank > myBestHandRank : rank < myBestHandRank
-            }.count
+            rangeCombos.append(contentsOf: combosInRange.map { CardCombo(cards: $0) })
         }
 
-        // レンジ内の全てのコンボ数を計算
-        let totalComboCount = rangeHands.reduce(0) { count, hand in
-            let possibleCombos = PokerLogic.generateAllPossibleCombos(for: hand, usedCards: usedCards)
-            return count + possibleCombos.count
+        let correctComboList = rangeCombos.filter { combo in
+            let rank = game.evaluator.evaluateHand(cards: combo.cards + game.board)
+            return mode == .losing ? rank > myBestHandRank : rank < myBestHandRank
         }
 
-        // 結果メッセージを設定
-        // 割合を計算
-        let ratio = Double(correctComboCount) / Double(totalComboCount)
-        resultMessage = "正解: \(correctHandArray.count)ハンド(\(selectedHands.count))\n" +
+        let correctComboSet = Set(correctComboList)
+        let selectedComboSet = Set(selectedCombos)
+
+        correctCombos = correctComboSet
+        missedCombos = correctComboSet.subtracting(selectedComboSet)
+        isCorrect = selectedComboSet == correctComboSet
+
+        let correctHandNames = Set(correctComboList.map { $0.handName })
+        let selectedHandNames = Set(selectedCombos.map { $0.handName })
+
+        let totalComboCount = rangeCombos.count
+        let correctComboCount = correctComboList.count
+        let ratio = totalComboCount == 0 ? 0.0 : Double(correctComboCount) / Double(totalComboCount)
+
+        resultMessage = "正解: \(correctHandNames.count)ハンド(\(selectedHandNames.count))\n" +
         "割合: \(String(format: "%.1f", ratio * 100))% (\(correctComboCount)/\(totalComboCount)コンボ)"
 
-        // 回答済みフラグを設定
         hasAnswered = true
 
-        // 結果アニメーションを表示
         withAnimation {
             showResultAnimation = true
         }
     }
 
-    // ポケットペアを全て選択/解除する関数
-    private func selectAllPocketPairs() {
-        let allHands = handGrid.flatMap { $0 }
-        if isPocketPairsSelected {
-            // すでに選択されている場合は解除
-            selectedHands = selectedHands.filter { hand in
-                hand.type != .pair
-            }
-            isPocketPairsSelected = false
-        } else {
-            // 選択されていない場合は追加
-            let pocketPairs = allHands.filter { hand in
-                hand.type == .pair
-            }
-            // 既存の選択に.pair以外のものを保持しつつ、新しいポケットペアを追加
-            selectedHands = selectedHands.filter { hand in
-                hand.type != .pair
-            } + pocketPairs
-            isPocketPairsSelected = true
-        }
-    }
-
-    // ハンド選択/解除の切り替え
-    private func toggleHandSelection(_ hand: Hand) {
-        if let index = selectedHands.firstIndex(where: { $0.id == hand.id }) {
-            selectedHands.remove(at: index) // 既に選択されていれば解除
-        } else {
-            selectedHands.append(hand) // 新しく選択
-        }
-    }
-
-    // 次の問題へ進むメソッド
     private func nextProblem() {
-        // 状態をリセット
-        selectedHands = []
+        startNewProblem(position: selectedPosition, boardSize: selectedBoardSize)
+    }
+
+    private func startNewProblem(position: PokerLogic.Position, boardSize: PokerLogic.BoardSize) {
+        game.startRandomBoard(position: position, boardSize: boardSize)
+        resetSelections()
+    }
+
+    private func resetSelections() {
+        selectedCombos = []
+        pendingCards = []
         hasAnswered = false
         resultMessage = ""
         isCorrect = false
         showResultAnimation = false
-        missedHands = []
-        correctHands = []
-        isPocketPairsSelected = false  // トグル状態をリセット
-        
-        // 新しい問題を開始
-        game.startRandomBoard(position: selectedPosition, boardSize: selectedBoardSize)
+        missedCombos = []
+        correctCombos = []
+    }
+
+    private func addPendingCombo() {
+        guard pendingCards.count == 2 else { return }
+        let combo = CardCombo(cards: pendingCards)
+        if !selectedCombos.contains(combo) {
+            selectedCombos.append(combo)
+        }
+        pendingCards.removeAll()
+    }
+
+    private func removeCombo(_ combo: CardCombo) {
+        if let index = selectedCombos.firstIndex(of: combo) {
+            selectedCombos.remove(at: index)
+        }
+    }
+
+    private func handleCardTap(_ card: Card) {
+        guard !hasAnswered else { return }
+
+        if let index = pendingCards.firstIndex(of: card) {
+            pendingCards.remove(at: index)
+        } else if pendingCards.count < 2 {
+            pendingCards.append(card)
+        }
+    }
+
+    private func sortedCombos(_ combos: [CardCombo]) -> [CardCombo] {
+        combos.sorted { lhs, rhs in
+            if lhs.handName == rhs.handName {
+                return lhs.displayText < rhs.displayText
+            }
+            return lhs.handName < rhs.handName
+        }
     }
 }
 
-// 個別ハンドセルのビュー
-struct HandCell: View {
-    let hand: Hand
-    let isSelected: Bool
-    let isMissed: Bool
-    let hasAnswered: Bool
-    let isCorrectHand: Bool
-    let isInRange: Bool
-    
-    var backgroundColor: Color {
-        if hasAnswered {
-            if isSelected && isCorrectHand {
-                return .green     // 正解のハンドを選択
-            } else if isSelected {
-                return .blue      // 不正解のハンドを選択
-            } else if isMissed {
-                return .red       // 選択されなかった正解
-            } else if !isInRange {
-                return Color.gray.opacity(0.2) // レンジ外のハンド
+struct CardCombo: Identifiable, Hashable {
+    private let internalCards: [Card]
+
+    init(cards: [Card]) {
+        self.internalCards = cards.sorted { lhs, rhs in
+            if lhs.rank == rhs.rank {
+                return lhs.suit.rawValue < rhs.suit.rawValue
             }
-        } else if isSelected {
-            return .blue      // 未回答時の選択状態
+            return lhs.rank.rawValue > rhs.rank.rawValue
         }
-        return Color.gray.opacity(0.5)  // 未選択
+    }
+
+    var cards: [Card] { internalCards }
+
+    var id: String {
+        internalCards.map { "\($0.rank.rawValue)\($0.suit.rawValue)" }.joined(separator: "-")
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+
+    static func == (lhs: CardCombo, rhs: CardCombo) -> Bool {
+        lhs.id == rhs.id
+    }
+
+    var displayText: String {
+        internalCards.map { $0.str }.joined(separator: " ")
+    }
+
+    var handName: String {
+        HandRange.handToString(internalCards)
+    }
+}
+
+struct CardSelectionButton: View {
+    let card: Card
+    let isSelected: Bool
+    let isDisabled: Bool
+    let isInAnyCombo: Bool
+    let action: () -> Void
+
+    private var backgroundColor: Color {
+        if isDisabled {
+            return Color.gray.opacity(0.2)
+        }
+        if isSelected {
+            return Color.blue
+        }
+        if isInAnyCombo {
+            return Color.green.opacity(0.4)
+        }
+        return Color.gray.opacity(0.5)
     }
 
     var body: some View {
-        Text(hand.name)
-            .font(.system(size: 12, weight: .bold))
-            .frame(width: 33, height: 33)
-            .background(backgroundColor)
-            .foregroundColor(.white)
-            .cornerRadius(0)
+        Button(action: action) {
+            Text(card.str)
+                .font(.system(size: 16, weight: .bold))
+                .frame(width: 40, height: 40)
+                .background(backgroundColor)
+                .foregroundColor(.white)
+                .cornerRadius(8)
+        }
+        .buttonStyle(.plain)
+        .disabled(isDisabled)
     }
 }
